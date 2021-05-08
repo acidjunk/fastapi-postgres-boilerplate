@@ -19,26 +19,14 @@ from server.db.models import (  # noqa: F401
     UtcTimestamp,
     UtcTimestampException,
 )
-from server.settings import app_settings, tracer_provider
+from server.settings import app_settings
 
-db = Database(app_settings.DATABASE_URI, app_settings.TRACING_ENABLED, tracer_provider)
+db = Database(app_settings.DATABASE_URI, app_settings.TRACING_ENABLED)
 
 __all__ = [
     "transactional",
-    "SubscriptionTable",
-    "ProcessSubscriptionTable",
-    "ProcessTable",
-    "ProcessStepTable",
-    "ProductTable",
-    "ProductBlockTable",
-    "SubscriptionInstanceRelationTable",
-    "SubscriptionInstanceTable",
-    "SubscriptionInstanceValueTable",
-    "ResourceTypeTable",
-    "FixedInputTable",
-    "EngineSettingsTable",
-    "WorkflowTable",
-    "SubscriptionCustomerDescriptionTable",
+    "ProductsTable",
+    "ProductTypesTable",
     "UtcTimestamp",
     "UtcTimestampException",
     "db",

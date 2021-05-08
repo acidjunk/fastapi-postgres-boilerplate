@@ -32,7 +32,7 @@ from server.db import db
 from server.db.database import DBSessionMiddleware
 from server.exception_handlers import form_error_handler, problem_detail_handler
 from server.forms import FormException
-from server.settings import app_settings, tracer_provider
+from server.settings import app_settings
 from server.version import GIT_COMMIT_HASH
 
 logger = structlog.get_logger(__name__)
