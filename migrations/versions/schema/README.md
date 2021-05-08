@@ -1,0 +1,1 @@
+Schema migrations can be found in this folder

@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    fastAPI aws lambda example
+Resources:
+    FastapiExampleLambda:
+        Type: AWS::Serverless::Function
+        Properties:
+            Events:
+                ApiEvent:
+                    Properties:
+                        RestApiId:
+                            Ref: FastapiPostgresBoilerplate
+                        Path: /{proxy+}
+                        Method: ANY
+                    Type: Api
+            FunctionName: fastapi-postgres-boilerplate
+            CodeUri: ./
+            Handler: server.main.handler
+            Runtime: python3.8
+            Timeout: 300 # timeout of your lambda function
+            MemorySize: 128 # memory size of your lambda function
+            Description: fastAPI boilerplate with postgres support
+            # other options, see ->
+            # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-template-anatomy-globals.html#sam-specification-template-anatomy-globals-supported-resources-and-properties
+            Role: !Sub arn:aws:iam::${AWS::AccountId}:role/fastapi-postgres-boilerplate
+
+    FastapiPostgresBoilerplate:
+        Type: AWS::Serverless::Api
+        Properties:
+            StageName: prod
+            OpenApiVersion: '3.0.1'
