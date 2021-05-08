@@ -27,7 +27,7 @@ createdb boilerplate -O fastapi
 createdb boilerplate-test -O fastapi
 ```
 
-Now you should be able to start a, hot reloading, api server:
+Now you should be able to start a hot reloading, api server:
 ```shell
 PYTHONPATH=. uvicorn server.main:app --reload --port 8080
 ```

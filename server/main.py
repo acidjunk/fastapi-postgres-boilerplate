@@ -15,11 +15,12 @@
 
 import structlog
 from fastapi.applications import FastAPI
-from opentelemetry import trace
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.instrumentation.psycopg2 import Psycopg2Instrumentor
-from opentelemetry.instrumentation.redis import RedisInstrumentor
-from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from mangum import Mangum
+# from opentelemetry import trace
+# from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+# from opentelemetry.instrumentation.psycopg2 import Psycopg2Instrumentor
+# from opentelemetry.instrumentation.redis import RedisInstrumentor
+# from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
@@ -35,7 +36,6 @@ from server.settings import app_settings, tracer_provider
 from server.version import GIT_COMMIT_HASH
 
 logger = structlog.get_logger(__name__)
-
 
 app = FastAPI(
     title="Boilerplate",
@@ -69,14 +69,27 @@ app.add_middleware(
 app.add_exception_handler(FormException, form_error_handler)
 app.add_exception_handler(ProblemDetailException, problem_detail_handler)
 
-if app_settings.TRACING_ENABLED:
-    trace.set_tracer_provider(tracer_provider)
-    FastAPIInstrumentor.instrument_app(app)
-    RequestsInstrumentor().instrument()
-    RedisInstrumentor().instrument()
-    Psycopg2Instrumentor().instrument()
-
+# if app_settings.TRACING_ENABLED:
+#     trace.set_tracer_provider(tracer_provider)
+#     FastAPIInstrumentor.instrument_app(app)
+#     RequestsInstrumentor().instrument()
+#     RedisInstrumentor().instrument()
+#     Psycopg2Instrumentor().instrument()
 
 @app.router.get("/", response_model=str, response_class=JSONResponse, include_in_schema=False)
 def index() -> str:
-    return "FastAPI postgres backend root"
+    return "FastAPI boilerplate backend root"
+
+
+@app.get("/ping")
+def pong():
+    """
+    Sanity check.
+    This will let the user know that the service is operational.
+    And this path operation will:
+    * show a lifesign
+    """
+    return {"ping": "pong!"}
+
+
+handler = Mangum(app, lifespan="off")
