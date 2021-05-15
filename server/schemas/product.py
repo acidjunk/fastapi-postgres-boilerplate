@@ -19,10 +19,10 @@ from server.schemas.base import BoilerplateBaseModel
 
 
 class ProductBaseSchema(BoilerplateBaseModel):
-    product_id: Optional[UUID]
+    id: Optional[UUID]
     name: str
     description: str
-    product_type: str
+    # product_type: str
     created_at: Optional[datetime]
     end_date: Optional[datetime]
 
@@ -31,7 +31,7 @@ class ProductBaseSchema(BoilerplateBaseModel):
 
 
 class ProductSchema(ProductBaseSchema):
-    product_id: UUID
+    id: UUID
     created_at: datetime
 
     class Config:

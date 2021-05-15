@@ -73,7 +73,7 @@ This opens a new migration in `/migrations/version/`
 To create a data migration do the following:
 
 ```shell
-PYTHONPATH=. PYTHONPATH=. alembic revision --message "Name of the migration" --head=general@head
+PYTHONPATH=. alembic revision --message "Name of the migration" --head=general@head
 ```
 
 This will also create a new revision file where normal SQL can be written like so:
@@ -81,4 +81,24 @@ This will also create a new revision file where normal SQL can be written like s
 ```python
 conn = op.get_bind()
 res = conn.execute("INSERT INTO products VALUES ('x', 'y', 'z')")
+```
+
+## Manual deploy
+
+Activate a python env with SAM installed, fire up Docker if it's not already running and run:
+
+```
+sam validate
+sam build --use-container --debug
+sam package --s3-bucket YOUR_S3_BUCKET \
+--output-template-file out.yml --region eu-central-1
+```
+
+And then deploy it with:
+
+```
+sam deploy --template-file out.yml \
+--stack-name fastapi-postgres-boilerplate \
+--region eu-central-1 --no-fail-on-empty-changeset \
+--capabilities CAPABILITY_IAM
 ```

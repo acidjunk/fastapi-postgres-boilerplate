@@ -37,6 +37,7 @@ from sqlalchemy import (
     text,
 )
 from sqlalchemy.dialects import postgresql as pg
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.engine import Dialect
 from sqlalchemy.exc import DontWrapMixin
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -81,6 +82,13 @@ class UtcTimestamp(TypeDecorator):
         return value
 
 
+class RolesUsersTabke(BaseModel):
+    __tablename__ = "roles_users"
+    id = Column(Integer(), primary_key=True)
+    user_id = Column("user_id", UUID(as_uuid=True), ForeignKey("users.id"))
+    role_id = Column("role_id", UUID(as_uuid=True), ForeignKey("roles.id"))
+
+
 class RolesTable(BaseModel):
     __tablename__ = "roles"
 
@@ -102,7 +110,7 @@ class UsersTable(BaseModel):
     created_at = Column(UtcTimestamp, default=datetime.now(tz=pytz.utc))
     updated_at = Column(UtcTimestamp, default=datetime.now(tz=pytz.utc), onupdate=datetime.now(tz=pytz.utc))
 
-    roles = relationship("Roles", secondary="users_to_roles", lazy="joined")
+    roles = relationship("RolesTable", secondary="roles_users", lazy="joined")
 
 
 class ProductsTable(BaseModel):

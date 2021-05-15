@@ -45,8 +45,10 @@ app = FastAPI(
     redoc_url="/api/redoc",
     version=GIT_COMMIT_HASH if GIT_COMMIT_HASH else "0.1.0",
     default_response_class=JSONResponse,
+    # root_path="/prod",
     servers=[
         {"url": "http://localhost:8080", "description": "Local environment"},
+        {"url": "https://postgres-boilerplate.renedohmen.nl", "description": "Test environment"},
         {"url": "https://boilerplate.dev.banaan.org", "description": "Development environment"},
         {"url": "https://boilerplate.staging.banaan.org", "description": "Staging environment"},
         {"url": "https://boilerplate.banaan.org", "description": "Production environment"},
