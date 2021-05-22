@@ -59,6 +59,9 @@ class AppSettings(BaseSettings):
     TRACING_INSTRUMENTATION_ENABLED: bool = False
     TRACE_SAMPLE_RATE: float = 1
 
+    class Config:
+        env_file = ".env"
+
 
 app_settings = AppSettings()
 

@@ -12,6 +12,7 @@ passlib[bcrypt]==1.7.4
 psycopg2-binary~=2.8.6
 pydantic[email]~=1.7.3
 pyjwt==2.1.0  # Todo: Not sure if we need this one
+python-dotenv~=0.17.1
 python-jose==3.2.0
 python-rapidjson==1.0
 pytz>=2019.1
