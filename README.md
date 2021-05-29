@@ -19,12 +19,12 @@ which library is used and for what reason.
 pip install -r ./requirements/all.txt
 ```
 
-A PostgreSQL user and two databases are required ('fastapi' is the password used by default).
+A PostgreSQL user and two databases are required ('boilerplate' is the password used by default).
 
 ```shell
-createuser -sP fastapi
-createdb boilerplate -O fastapi
-createdb boilerplate-test -O fastapi
+createuser -sP boilerplate
+createdb boilerplate -O boilerplate
+createdb boilerplate-test -O boilerplate
 ```
 
 Now you should be able to start a hot reloading, api server:

@@ -44,7 +44,7 @@ class AppSettings(BaseSettings):
     ENVIRONMENT: str = "local"
     SWAGGER_HOST: str = "localhost"
     GUI_URI: str = "http://localhost:3000"
-    DATABASE_URI: str = "postgresql://fastapi:fastapi@localhost/boilerplate"
+    DATABASE_URI: str = "postgresql://boilerplate:boilerplate@localhost/boilerplate"
     MAX_WORKERS: int = 5
     MAIL_SERVER: str = "localhost"
     MAIL_PORT: int = 25
