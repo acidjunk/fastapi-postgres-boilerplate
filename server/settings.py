@@ -15,9 +15,6 @@ import secrets
 import string
 from typing import List
 
-# from opentelemetry.exporter import jaeger
-# from opentelemetry.sdk.trace import TracerProvider
-# from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from pydantic import BaseSettings
 
 
@@ -55,22 +52,9 @@ class AppSettings(BaseSettings):
     SERVICE_NAME: str = "Boilerplate"
     LOGGING_HOST: str = "localhost"
     LOG_LEVEL: str = "DEBUG"
-    TRACING_ENABLED: bool = False
-    TRACING_INSTRUMENTATION_ENABLED: bool = False
-    TRACE_SAMPLE_RATE: float = 1
 
     class Config:
         env_file = ".env"
 
 
 app_settings = AppSettings()
-
-# # Tracer settings
-# jaeger_exporter = jaeger.JaegerSpanExporter(
-#     service_name=app_settings.SERVICE_NAME,
-#     agent_host_name=app_settings.LOGGING_HOST,
-#     insecure=True,
-# )
-#
-# tracer_provider = TracerProvider()
-# tracer_provider.add_span_processor(BatchExportSpanProcessor(jaeger_exporter))

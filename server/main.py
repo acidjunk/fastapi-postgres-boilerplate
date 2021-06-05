@@ -47,8 +47,8 @@ app = FastAPI(
     default_response_class=JSONResponse,
     # root_path="/prod",
     servers=[
-        {"url": "http://localhost:8080", "description": "Local environment"},
         {"url": "https://postgres-boilerplate.renedohmen.nl", "description": "Test environment"},
+        {"url": "http://localhost:8080", "description": "Local environment"},
         {"url": "https://boilerplate.dev.banaan.org", "description": "Development environment"},
         {"url": "https://boilerplate.staging.banaan.org", "description": "Staging environment"},
         {"url": "https://boilerplate.banaan.org", "description": "Production environment"},

@@ -7,15 +7,8 @@ fastapi~=0.63.0
 fastapi-mail~=0.3.5.0
 gunicorn~=20.0.4
 itsdangerous==1.1.0
+mangum==0.11.0
 more-itertools~=8.7.0
-opentelemetry-api~=0.17b0
-opentelemetry-exporter-jaeger~=0.17b0
-opentelemetry-instrumentation-fastapi~=0.17b0
-opentelemetry-instrumentation-psycopg2~=0.17b0
-opentelemetry-instrumentation-redis~=0.17b0
-opentelemetry-instrumentation-requests~=0.17b0
-opentelemetry-instrumentation-sqlalchemy~=0.17b0
-opentelemetry-sdk==0.17b0
 passlib[bcrypt]==1.7.4
 psycopg2-binary~=2.8.6
 pydantic[email]~=1.7.3

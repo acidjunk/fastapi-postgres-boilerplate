@@ -62,13 +62,3 @@ def update_product(data: ProductCRUDSchema = Body(...)) -> None:
 @router.delete("/{product_id}", response_model=None, status_code=HTTPStatus.NO_CONTENT)
 def delete_product(product_id: UUID) -> None:
     return delete(ProductsTable, product_id)
-#
-#
-# @router.get("/tags/all", response_model=List[str])
-# def tags() -> List[str]:
-#     return get_tags()
-#
-#
-# @router.get("/types/all", response_model=List[str])
-# def types() -> List[str]:
-#     return get_types()

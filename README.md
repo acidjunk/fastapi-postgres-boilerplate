@@ -44,7 +44,6 @@ All configuration is done via ENV vars.
 ```shell
 export SESSION_SECRET="SUPER_DUPER_SECRET"
 export TESTING=False
-export TRACING_ENABLED=Treu
 ```
 
 > Note: FastAPI will detect and automatically load an existing `.env` file. 

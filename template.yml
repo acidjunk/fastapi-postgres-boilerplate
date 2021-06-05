@@ -30,7 +30,3 @@ Resources:
         Properties:
             StageName: prod
             OpenApiVersion: '3.0.1'
-            Environment:
-                Variables:
-                    DATABASE_URI: "postgresql://boilerplate:your_cool_password@boilerplate.cogvbar6jpcc.eu-central-1.rds.amazonaws.com/boilerplate"
-                    SESSION_SECRET: testIfThisWorks

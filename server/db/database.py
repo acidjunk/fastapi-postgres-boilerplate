@@ -17,8 +17,6 @@ from typing import Any, Callable, ClassVar, Dict, Generator, Iterator, List, Opt
 from uuid import uuid4
 
 import structlog
-# from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
-# from opentelemetry.trace import TracerProvider
 from sqlalchemy import create_engine
 from sqlalchemy import inspect as sa_inspect
 from sqlalchemy.ext.declarative import as_declarative
@@ -191,7 +189,7 @@ class Database:
     """
 
     def __init__(
-        self, db_url: str, tracing_enabled: bool = False,  # tracer_provider: Optional[TracerProvider] = None
+        self, db_url: str
     ) -> None:
         self.request_context: ContextVar[str] = ContextVar("request_context", default="")
         self.engine = create_engine(db_url, **ENGINE_ARGUMENTS)
@@ -199,9 +197,6 @@ class Database:
 
         self.scoped_session = scoped_session(self.session_factory, self._scopefunc)
         BaseModel.set_query(cast(SearchQuery, self.scoped_session.query_property()))
-
-        # if tracing_enabled:
-        #     SQLAlchemyInstrumentor().instrument(engine=self.engine, tracer_provider=tracer_provider)
 
     def _scopefunc(self) -> Optional[str]:
         scope_str = self.request_context.get()

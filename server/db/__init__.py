@@ -21,7 +21,7 @@ from server.db.models import (  # noqa: F401
 )
 from server.settings import app_settings
 
-db = Database(app_settings.DATABASE_URI, app_settings.TRACING_ENABLED)
+db = Database(app_settings.DATABASE_URI)
 
 __all__ = [
     "transactional",

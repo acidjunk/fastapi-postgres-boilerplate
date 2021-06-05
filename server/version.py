@@ -10,7 +10,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import os
 from subprocess import check_output  # noqa: S404
 from typing import Optional
 
@@ -18,6 +18,7 @@ import structlog
 
 logger = structlog.getLogger(__name__)
 
+VERSION = "1.0"
 
 def __getattr__(name: str) -> Optional[str]:
     """
@@ -34,6 +35,9 @@ def __getattr__(name: str) -> Optional[str]:
     Returns: current GIT commit SHA if any.
 
     """
+    if os.environ.get("ENVIRONMENT") == "production":
+        return VERSION
+
     if name == "GIT_COMMIT_HASH":
         try:
             return check_output(["/usr/bin/env", "git", "rev-parse", "HEAD"]).decode().strip()  # noqa: S603
