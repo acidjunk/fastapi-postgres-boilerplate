@@ -101,3 +101,6 @@ sam deploy --template-file out.yml \
 --region eu-central-1 --no-fail-on-empty-changeset \
 --capabilities CAPABILITY_IAM
 ```
+
+An more detailed explanation about the deployment on Amazon lambda can be found on: 
+[renedohmen.nl/deploy-fastapi-on-amazon-serverless](https://www.renedohmen.nl/deploy-fastapi-on-amazon-serverless/)

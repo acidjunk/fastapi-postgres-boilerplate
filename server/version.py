@@ -20,6 +20,7 @@ logger = structlog.getLogger(__name__)
 
 VERSION = "1.0"
 
+
 def __getattr__(name: str) -> Optional[str]:
     """
     Return the GIT_COMMIT_HASH.
