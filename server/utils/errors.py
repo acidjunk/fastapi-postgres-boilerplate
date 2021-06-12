@@ -10,9 +10,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
+import random
+import string
 import sys
+import traceback
 from http import HTTPStatus
 from typing import TYPE_CHECKING, Dict, Optional, Tuple, cast
 
@@ -20,24 +21,40 @@ import structlog
 
 from server.types import ErrorDict, ErrorState
 
-# if TYPE_CHECKING:
-#
-#     def show_ex(ex: BaseException, stacklimit: Optional[int] = None) -> str:
-#         ...
-#
-#
-# else:
-#     from nwastdlib.ex import show_ex
-
-
 logger = structlog.get_logger(__name__)
 
 
+def format_ex(ex, stacklimit=None):
+    """
+    Format an exception with a pseudo-random key and the shown exception.
+
+    Returns a tuple of the exception string and key.
+    """
+    key = "".join(random.choices(string.ascii_letters + string.digits, k=6))
+    s = show_ex(ex, stacklimit)
+    return key, "[{}] {}".format(key, s)
+
+
+def show_ex(ex, stacklimit=None):
+    """
+    Show an exception, including its class name, message and (limited) stacktrace.
+
+    >>> try:
+    ...     raise Exception("Something went wrong")
+    ... except Exception as e:
+    ...     print(show_ex(e))
+    Exception: Something went wrong
+    ...
+    """
+    tbfmt = "".join(traceback.format_tb(ex.__traceback__, stacklimit))
+    return "{}: {}\n{}".format(type(ex).__name__, ex, tbfmt)
+
+
+# Todo: decide if this can be removed.
 class ApiException(Exception):
     """Api Exception Class.
 
-    This is a copy of what is generated in api_clients. We use this to have consistent error handling for nso to.
-    This should conform to what is used in the api clients.
+    This is a copy of what is generated in api_clients that are used to connect to external REST api's.
     """
 
     status: Optional[HTTPStatus]
@@ -89,8 +106,8 @@ def is_api_exception(ex: Exception) -> bool:
     return ex.__class__.__name__ == "ApiException"
 
 
+# Todo: decide if this can be removed.
 def error_state_to_dict(err: ErrorState) -> ErrorDict:
-    # Todo: decide if this can be removed.
     """Return an ErrorDict based on the exception, string or tuple in the ErrorState.
 
     Args:

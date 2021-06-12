@@ -128,3 +128,14 @@ class ProductTypesTable(BaseModel):
     id = Column(UUIDType, server_default=text("uuid_generate_v4()"), primary_key=True)
     product_type = Column(String(510), nullable=False, unique=True)
     description = Column(Text())
+
+
+class MapsTable(BaseModel):
+    __tablename__ = "maps"
+    id = Column(UUIDType, server_default=text("uuid_generate_v4()"), primary_key=True)
+    name = Column(String(510), nullable=False, unique=True)
+    description = Column(Text())
+    size_x = Column(Integer, default=100)
+    size_y = Column(Integer, default=100)
+    status = Column(String(255), nullable=False, default="new")
+    created_at = Column(UtcTimestamp, nullable=False, server_default=text("current_timestamp()"))

@@ -13,16 +13,19 @@
 
 from http import HTTPStatus
 from typing import List, Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from fastapi.param_functions import Body
 from fastapi.routing import APIRouter
-from sqlalchemy.orm import joinedload, selectinload
 
 from server.api.error_handling import raise_status
 from server.api.models import delete, save, update
 from server.db import ProductsTable
 from server.schemas import ProductCRUDSchema, ProductSchema
+from server.utils.datetime import nowtz
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 router = APIRouter()
 
@@ -51,6 +54,10 @@ def product_by_id(id: UUID) -> ProductsTable:
 
 @router.post("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
 def save_product(data: ProductCRUDSchema = Body(...)) -> None:
+    # Todo: this shouldn't be needed (there is a problem in setting the default date)
+    data.created_at = str(nowtz())
+    data.id = str(uuid4())
+    logger.info("Saving map", data=data)
     return save(ProductsTable, data)
 
 

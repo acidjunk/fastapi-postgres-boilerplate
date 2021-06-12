@@ -18,9 +18,6 @@ branch_labels = None
 depends_on = None
 
 
-# TODO: Fix created_at and updated_at default values.
-
-
 def upgrade() -> None:
     conn = op.get_bind()
     conn.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public')

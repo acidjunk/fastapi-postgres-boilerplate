@@ -104,3 +104,11 @@ sam deploy --template-file out.yml \
 
 An more detailed explanation about the deployment on Amazon lambda can be found on: 
 [renedohmen.nl/deploy-fastapi-on-amazon-serverless](https://www.renedohmen.nl/deploy-fastapi-on-amazon-serverless/)
+
+
+Workshop:
+=========
+- deliver the tests for DB model: `maps`
+- get it running on AWS yourself
+- fix db default and product save() problem
+

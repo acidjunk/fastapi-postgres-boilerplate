@@ -115,8 +115,6 @@ def to_serializable(o: Any) -> Any:
     """
     if isinstance(o, UUID):
         return str(o)
-    if isinstance(o, _BaseNetwork):
-        return str(o)
     if isinstance(o, datetime):
         return isoformat(o)
     if is_dataclass(o):

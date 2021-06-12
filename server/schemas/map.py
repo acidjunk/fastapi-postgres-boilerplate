@@ -16,20 +16,31 @@ from typing import List, Optional
 from uuid import UUID
 
 from server.schemas.base import BoilerplateBaseModel
+from server.types import strEnum
 
 
-class ProductBaseSchema(BoilerplateBaseModel):
+class MapStatus(strEnum):
+    NEW = "new"
+    CLOSED = "closed"
+    ACTIVE = "active"
+    TERMINATED = "terminated"
+
+
+class MapBaseSchema(BoilerplateBaseModel):
     id: Optional[UUID]
     name: str
     description: str
-    # product_type: str
+    size_x: int
+    size_y: int
+    status: MapStatus
     created_at: Optional[datetime]
+    end_date: Optional[datetime]
 
     class Config:
         orm_mode = True
 
 
-class ProductSchema(ProductBaseSchema):
+class MapSchema(MapBaseSchema):
     id: UUID
     created_at: datetime
 
@@ -37,5 +48,5 @@ class ProductSchema(ProductBaseSchema):
         orm_mode = True
 
 
-class ProductCRUDSchema(ProductBaseSchema):
+class MapCRUDSchema(MapBaseSchema):
     pass

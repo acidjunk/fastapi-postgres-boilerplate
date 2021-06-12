@@ -12,15 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import logging
 
 import structlog
 from fastapi.applications import FastAPI
 from mangum import Mangum
-# from opentelemetry import trace
-# from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-# from opentelemetry.instrumentation.psycopg2 import Psycopg2Instrumentor
-# from opentelemetry.instrumentation.redis import RedisInstrumentor
-# from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
@@ -30,10 +26,25 @@ from server.api.api_v1.api import api_router
 from server.api.error_handling import ProblemDetailException
 from server.db import db
 from server.db.database import DBSessionMiddleware
-from server.exception_handlers import form_error_handler, problem_detail_handler
+from server.exception_handlers.generic_exception_handlers import form_error_handler, problem_detail_handler
 from server.forms import FormException
 from server.settings import app_settings
 from server.version import GIT_COMMIT_HASH
+
+structlog.configure(
+    processors=[
+        structlog.processors.add_log_level,
+        structlog.processors.StackInfoRenderer(),
+        structlog.dev.set_exc_info,
+        structlog.processors.format_exc_info,
+        structlog.processors.TimeStamper(),
+        structlog.dev.ConsoleRenderer()
+    ],
+    wrapper_class=structlog.make_filtering_bound_logger(logging.NOTSET),
+    context_class=dict,
+    logger_factory=structlog.PrintLoggerFactory(),
+    cache_logger_on_first_use=False
+)
 
 logger = structlog.get_logger(__name__)
 
@@ -71,12 +82,6 @@ app.add_middleware(
 app.add_exception_handler(FormException, form_error_handler)
 app.add_exception_handler(ProblemDetailException, problem_detail_handler)
 
-# if app_settings.TRACING_ENABLED:
-#     trace.set_tracer_provider(tracer_provider)
-#     FastAPIInstrumentor.instrument_app(app)
-#     RequestsInstrumentor().instrument()
-#     RedisInstrumentor().instrument()
-#     Psycopg2Instrumentor().instrument()
 
 @app.router.get("/", response_model=str, response_class=JSONResponse, include_in_schema=False)
 def index() -> str:
@@ -94,4 +99,5 @@ def pong():
     return {"ping": "pong!"}
 
 
+logger.info("App is running")
 handler = Mangum(app, lifespan="off")
