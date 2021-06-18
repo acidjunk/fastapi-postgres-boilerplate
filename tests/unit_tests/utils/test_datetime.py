@@ -1,4 +1,4 @@
-from server.utils.datetime import TIMESTAMP_REGEX, timestamp
+from server.utils.date_utils import TIMESTAMP_REGEX, timestamp
 
 
 def test_timestamp_and_regex():

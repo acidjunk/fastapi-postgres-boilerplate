@@ -21,11 +21,27 @@ from pydantic.networks import EmailStr, PostgresDsn
 
 
 class AppSettings(BaseSettings):
+    """
+    Deal with global app settings.
+
+    The goal is to provide some sensible default for developers here. All constants can be
+    overloaded via ENV vars. The validators are used to ensure that you get readable error
+    messages when an ENV var isn't correctly formated; for example when you provide an incorrect
+    formatted DATABASE_URI.
+
+    ".env" loading is also supported. FastAPI will autoload and ".env" file if one can be found
+
+    In production you need to provide a lot stuff via the ENV. At least DATABASE_URI, SESSION_SECRET,
+    TESTING, LOGLEVEL and EMAILS_ENABLED + mail server settings if needed.
+    """
     PROJECT_NAME: str = "Boilerplate webservice"
     TESTING: bool = True
+    EMAILS_ENABLED: bool = False
     SESSION_SECRET: str = "".join(secrets.choice(string.ascii_letters) for i in range(16))  # noqa: S311
-    OAUTH_ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    # OAUTH settings
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     JWT_ALGORITHM = "HS256"
+    # CORS settings
     CORS_ORIGINS: str = "*"
     CORS_ALLOW_METHODS: List[str] = ["GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "HEAD"]
     CORS_ALLOW_HEADERS: List[str] = ["If-None-Match", "Authorization", "If-Match", "Content-Type"]
@@ -44,6 +60,7 @@ class AppSettings(BaseSettings):
     ENVIRONMENT: str = "local"
     SWAGGER_HOST: str = "localhost"
     GUI_URI: str = "http://localhost:3000"
+    # DB (probably only postgres for now; we use UUID postgres dialect for the ID's)
     DATABASE_URI: str = "postgresql://boilerplate:boilerplate@localhost/boilerplate"
 
     @validator("DATABASE_URI", pre=True)
@@ -75,6 +92,9 @@ class AppSettings(BaseSettings):
     EMAILS_FROM_EMAIL: Optional[EmailStr] = None
     EMAILS_FROM_NAME: Optional[str] = None
 
+    FIRST_SUPERUSER = "admin@banaan.org"
+    FIRST_SUPERUSER_PASSWORD = "CHANGEME"
+
     @validator("EMAILS_FROM_NAME")
     def get_project_name(cls, v: Optional[str], values: Dict[str, Any]) -> str:
         if not v:
@@ -82,8 +102,8 @@ class AppSettings(BaseSettings):
         return v
 
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
-    EMAIL_TEMPLATES_DIR: str = "/app/app/email-templates/build"
-    EMAILS_ENABLED: bool = False
+    # Todo: check path. The original had one extra folder "app"
+    EMAIL_TEMPLATES_DIR: str = "/server/email-templates/build"
 
     @validator("EMAILS_ENABLED", pre=True)
     def get_emails_enabled(cls, v: bool, values: Dict[str, Any]) -> bool:

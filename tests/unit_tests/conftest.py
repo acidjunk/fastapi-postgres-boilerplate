@@ -29,7 +29,7 @@ from server.exception_handlers.generic_exception_handlers import form_error_hand
 from server.forms import FormException
 from server.settings import app_settings
 from server.types import UUIDstr
-from server.utils.datetime import nowtz
+from server.utils.date_utils import nowtz
 
 logger = structlog.getLogger(__name__)
 

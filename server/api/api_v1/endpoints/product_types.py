@@ -21,18 +21,18 @@ from fastapi.routing import APIRouter
 from server.api.error_handling import raise_status
 from server.api.models import delete, save, update
 from server.db import ProductTypesTable
-from server.schemas import ProductTypeBaseSchema, ProductTypeSchema
+from server.schemas.product_type import ProductType, ProductTypeCreate, ProductTypeUpdate
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[ProductTypeSchema])
-def fetch() -> List[ProductTypeSchema]:
+@router.get("/", response_model=List[ProductType])
+def fetch() -> List[ProductType]:
     return ProductTypesTable.query.all()
 
 
-@router.get("/{id}", response_model=ProductTypeSchema)
-def product_type_by_id(id: UUID) -> ProductTypeSchema:
+@router.get("/{id}", response_model=ProductType)
+def product_type_by_id(id: UUID) -> ProductType:
     product_type = ProductTypesTable.query.filter_by(id=id).first()
     if not product_type:
         raise_status(HTTPStatus.NOT_FOUND, f"Product type {id} not found")
@@ -40,12 +40,12 @@ def product_type_by_id(id: UUID) -> ProductTypeSchema:
 
 
 @router.post("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def save_product_type(data: ProductTypeBaseSchema = Body(...)) -> None:
+def save_product_type(data: ProductTypeCreate = Body(...)) -> None:
     return save(ProductTypesTable, data)
 
 
 @router.put("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def update_product_type(data: ProductTypeSchema = Body(...)) -> None:
+def update_product_type(data: ProductTypeUpdate = Body(...)) -> None:
     return update(ProductTypesTable, data)
 
 

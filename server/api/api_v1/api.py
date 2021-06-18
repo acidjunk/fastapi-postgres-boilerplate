@@ -18,7 +18,7 @@ from fastapi.routing import APIRouter
 
 from server.api.api_v1.endpoints import (
     health,
-    products,
+    login, maps, products,
     product_types,
     settings,
 )
@@ -26,16 +26,18 @@ from server.api.api_v1.endpoints import (
 # Todo: add security depends here or in endpoints
 
 api_router = APIRouter()
+api_router.include_router(login.router, tags=["login"])
 
+api_router.include_router(maps.router, prefix="/maps", tags=["maps"])
 api_router.include_router(
-    products.router, prefix="/products", tags=["Core", "Product"]
+    products.router, prefix="/products", tags=["products"]
 )
 api_router.include_router(
     product_types.router,
     prefix="/product_types",
-    tags=["Core", "Product Types"],
+    tags=["products"],
 )
 api_router.include_router(
-    settings.router, prefix="/settings", tags=["Core", "Settings"]
+    settings.router, prefix="/settings", tags=["system"]
 )
-api_router.include_router(health.router, prefix="/health", tags=["Core"])
+api_router.include_router(health.router, prefix="/health", tags=["system"])

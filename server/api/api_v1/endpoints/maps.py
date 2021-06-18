@@ -20,14 +20,14 @@ from fastapi.routing import APIRouter
 
 from server.api.error_handling import raise_status
 from server.api.models import delete, save, update
-from server.db import MapsTable
-from server.schemas import MapCRUDSchema, MapSchema
+from server.db.models import MapsTable
+from server.schemas import Map, MapCreate, MapUpdate
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[MapSchema])
-def fetch(status: Optional[str] = None) -> List[MapSchema]:
+@router.get("/", response_model=List[Map])
+def fetch(status: Optional[str] = None) -> List[Map]:
     query = MapsTable.query
 
     if status:
@@ -36,7 +36,7 @@ def fetch(status: Optional[str] = None) -> List[MapSchema]:
     return query.all()
 
 
-@router.get("/{id}", response_model=MapSchema)
+@router.get("/{id}", response_model=Map)
 def map_by_id(id: UUID) -> MapsTable:
     map = (
         MapsTable.query
@@ -49,12 +49,12 @@ def map_by_id(id: UUID) -> MapsTable:
 
 
 @router.post("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def save_map(data: MapCRUDSchema = Body(...)) -> None:
+def save_map(data: MapCreate = Body(...)) -> None:
     return save(MapsTable, data)
 
 
 @router.put("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def update_map(data: MapCRUDSchema = Body(...)) -> None:
+def update_map(data: MapUpdate = Body(...)) -> None:
     return update(MapsTable, data)
 
 

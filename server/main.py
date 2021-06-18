@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import logging
+import os
 
 import structlog
 from fastapi.applications import FastAPI
@@ -58,8 +59,7 @@ app = FastAPI(
     default_response_class=JSONResponse,
     # root_path="/prod",
     servers=[
-        {"url": "https://postgres-boilerplate.renedohmen.nl", "description": "Test environment"},
-        {"url": "http://localhost:8080", "description": "Local environment"},
+        {"url": "https://postgres-boilerplate.renedohmen.nl", "description": "Test environment"} if os.getenv("ENVIRONMENT") == "production" else {"url": "http://localhost:8080", "description": "Local environment"},
         {"url": "https://boilerplate.dev.banaan.org", "description": "Development environment"},
         {"url": "https://boilerplate.staging.banaan.org", "description": "Staging environment"},
         {"url": "https://boilerplate.banaan.org", "description": "Production environment"},

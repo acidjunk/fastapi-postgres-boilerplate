@@ -21,8 +21,8 @@ from fastapi.routing import APIRouter
 from server.api.error_handling import raise_status
 from server.api.models import delete, save, update
 from server.db import ProductsTable
-from server.schemas import ProductCRUDSchema, ProductSchema
-from server.utils.datetime import nowtz
+from server.schemas.product import Product, ProductCreate, ProductUpdate
+from server.utils.date_utils import nowtz
 import structlog
 
 logger = structlog.get_logger(__name__)
@@ -30,8 +30,8 @@ logger = structlog.get_logger(__name__)
 router = APIRouter()
 
 
-@router.get("/", response_model=List[ProductSchema])
-def fetch(product_type: Optional[str] = None) -> List[ProductSchema]:
+@router.get("/", response_model=List[Product])
+def fetch(product_type: Optional[str] = None) -> List[Product]:
     query = ProductsTable.query
 
     if product_type:
@@ -40,7 +40,7 @@ def fetch(product_type: Optional[str] = None) -> List[ProductSchema]:
     return query.all()
 
 
-@router.get("/{id}", response_model=ProductSchema)
+@router.get("/{id}", response_model=Product)
 def product_by_id(id: UUID) -> ProductsTable:
     product = (
         ProductsTable.query
@@ -53,7 +53,7 @@ def product_by_id(id: UUID) -> ProductsTable:
 
 
 @router.post("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def save_product(data: ProductCRUDSchema = Body(...)) -> None:
+def save_product(data: ProductCreate = Body(...)) -> None:
     # Todo: this shouldn't be needed (there is a problem in setting the default date)
     data.created_at = str(nowtz())
     data.id = str(uuid4())
@@ -62,7 +62,7 @@ def save_product(data: ProductCRUDSchema = Body(...)) -> None:
 
 
 @router.put("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def update_product(data: ProductCRUDSchema = Body(...)) -> None:
+def update_product(data: ProductUpdate = Body(...)) -> None:
     return update(ProductsTable, data)
 
 

@@ -47,7 +47,7 @@ from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy_utils import TSVectorType, UUIDType
 
 from server.db.database import BaseModel, SearchQuery
-from server.utils.datetime import nowtz
+from server.utils.date_utils import nowtz
 from server.version import GIT_COMMIT_HASH
 
 logger = structlog.get_logger(__name__)

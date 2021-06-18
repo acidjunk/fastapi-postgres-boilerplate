@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy.orm.exc import NoResultFound
 
 from server.db import ProductsTable, db, transactional
-from server.utils.datetime import nowtz
+from server.utils.date_utils import nowtz
 
 
 def test_transactional():

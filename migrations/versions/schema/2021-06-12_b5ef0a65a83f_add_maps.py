@@ -12,7 +12,7 @@ from alembic import op
 from server import db
 
 # revision identifiers, used by Alembic.
-from server.utils.datetime import nowtz
+from server.utils.date_utils import nowtz
 
 revision = 'b5ef0a65a83f'
 down_revision = '0acce38ffd69'

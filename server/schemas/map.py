@@ -26,21 +26,28 @@ class MapStatus(strEnum):
     TERMINATED = "terminated"
 
 
-class MapBaseSchema(BoilerplateBaseModel):
-    id: Optional[UUID]
+# Todo: investigate if we need our own Base or just use pydantic's
+class MapBase(BoilerplateBaseModel):
     name: str
     description: str
     size_x: int
     size_y: int
     status: MapStatus
-    created_at: Optional[datetime]
-    end_date: Optional[datetime]
 
     class Config:
         orm_mode = True
 
 
-class MapSchema(MapBaseSchema):
+# Properties to receive via API on creation
+class MapCreate(MapBase):
+    pass
+
+# Properties to receive via API on update
+class MapUpdate(MapBase):
+    end_date: Optional[datetime]
+
+
+class MapInDBBase(MapBase):
     id: UUID
     created_at: datetime
 
@@ -48,5 +55,6 @@ class MapSchema(MapBaseSchema):
         orm_mode = True
 
 
-class MapCRUDSchema(MapBaseSchema):
+# Additional properties to return via API
+class Map(MapInDBBase):
     pass

@@ -17,7 +17,7 @@ from uuid import UUID
 from server.schemas.base import BoilerplateBaseModel
 
 
-class ProductTypeBaseSchema(BoilerplateBaseModel):
+class ProductTypeBase(BoilerplateBaseModel):
     product_type: str
     description: Optional[str]
     product_type_id: Optional[UUID]
@@ -26,8 +26,22 @@ class ProductTypeBaseSchema(BoilerplateBaseModel):
         orm_mode = True
 
 
-class ProductTypeSchema(ProductTypeBaseSchema):
+# Properties to receive via API on creation
+class ProductTypeCreate(ProductTypeBase):
+    pass
+
+# Properties to receive via API on update
+class ProductTypeUpdate(ProductTypeBase):
+    pass
+
+
+class ProductTypeInDBBase(ProductTypeBase):
     product_type_id: UUID
 
     class Config:
         orm_mode = True
+
+
+# Additional properties to return via API
+class ProductType(ProductTypeBase):
+    pass
