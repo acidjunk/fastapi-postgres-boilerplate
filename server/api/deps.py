@@ -11,17 +11,13 @@ from server.db.models import UsersTable
 from server.schemas import TokenPayload, User
 from server.settings import app_settings
 
-reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{app_settings.API_V1_STR}/login/access-token"
-)
+reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"/api/login/access-token")
 
 
-def get_current_user(
-    token: str = Depends(reusable_oauth2)
-) -> UsersTable:
+def get_current_user(token: str = Depends(reusable_oauth2)) -> UsersTable:
     try:
         payload = jwt.decode(
-            token, app_settings.SECRET_KEY, algorithms=[app_settings.JWT_ALGORITHM]
+            token, app_settings.SESSION_SECRET, algorithms=[app_settings.JWT_ALGORITHM]
         )
         token_data = TokenPayload(**payload)
     except (jwt.JWTError, ValidationError):

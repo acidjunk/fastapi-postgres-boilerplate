@@ -50,7 +50,15 @@ def _query_with_filters(
             if filter and len(filter) == 2:
                 field = filter[0]
                 value = filter[1]
-                value_as_bool = value.lower() in ("yes", "y", "ye", "true", "1", "ja", "insync")
+                value_as_bool = value.lower() in (
+                    "yes",
+                    "y",
+                    "ye",
+                    "true",
+                    "1",
+                    "ja",
+                    "insync",
+                )
                 if value is not None:
                     if field.endswith("_gt"):
                         query = query.filter(model.__dict__[field[:-3]] > value)
@@ -66,7 +74,9 @@ def _query_with_filters(
                         logger.debug("Running full-text search query.", value=value)
                         query = query.search(value)
                     elif field in model.__dict__:
-                        query = query.filter(cast(model.__dict__[field], String).ilike("%" + value + "%"))
+                        query = query.filter(
+                            cast(model.__dict__[field], String).ilike("%" + value + "%")
+                        )
 
     if sort is not None and len(sort) >= 2:
         for sort in chunked(sort, 2):

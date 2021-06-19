@@ -31,13 +31,17 @@ def test_product_by_id_404(product_1, test_client):
 
 def test_save(test_client):
     p_id = uuid4()
-    body ={
+    body = {
         "product_id": str(p_id),
         "name": "Product",
         "description": "Product description",
     }
 
-    response = test_client.post("/api/products/", data=json_dumps(body), headers={"Content_Type": "application/json"})
+    response = test_client.post(
+        "/api/products/",
+        data=json_dumps(body),
+        headers={"Content_Type": "application/json"},
+    )
     assert HTTPStatus.NO_CONTENT == response.status_code
     products = test_client.get("/api/products").json()
     assert 1 == len(products)

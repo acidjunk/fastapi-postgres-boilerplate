@@ -42,6 +42,7 @@ class MapBase(BoilerplateBaseModel):
 class MapCreate(MapBase):
     pass
 
+
 # Properties to receive via API on update
 class MapUpdate(MapBase):
     end_date: Optional[datetime]

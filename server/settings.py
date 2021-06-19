@@ -34,17 +34,33 @@ class AppSettings(BaseSettings):
     In production you need to provide a lot stuff via the ENV. At least DATABASE_URI, SESSION_SECRET,
     TESTING, LOGLEVEL and EMAILS_ENABLED + mail server settings if needed.
     """
+
     PROJECT_NAME: str = "Boilerplate webservice"
     TESTING: bool = True
     EMAILS_ENABLED: bool = False
-    SESSION_SECRET: str = "".join(secrets.choice(string.ascii_letters) for i in range(16))  # noqa: S311
+    SESSION_SECRET: str = "".join(
+        secrets.choice(string.ascii_letters) for i in range(16)
+    )  # noqa: S311
     # OAUTH settings
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     JWT_ALGORITHM = "HS256"
     # CORS settings
     CORS_ORIGINS: str = "*"
-    CORS_ALLOW_METHODS: List[str] = ["GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS", "HEAD"]
-    CORS_ALLOW_HEADERS: List[str] = ["If-None-Match", "Authorization", "If-Match", "Content-Type"]
+    CORS_ALLOW_METHODS: List[str] = [
+        "GET",
+        "PUT",
+        "PATCH",
+        "POST",
+        "DELETE",
+        "OPTIONS",
+        "HEAD",
+    ]
+    CORS_ALLOW_HEADERS: List[str] = [
+        "If-None-Match",
+        "Authorization",
+        "If-Match",
+        "Content-Type",
+    ]
     CORS_EXPOSE_HEADERS: List[str] = [
         "Cache-Control",
         "Content-Language",

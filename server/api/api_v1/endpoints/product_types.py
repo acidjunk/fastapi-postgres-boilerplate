@@ -21,7 +21,11 @@ from fastapi.routing import APIRouter
 from server.api.error_handling import raise_status
 from server.api.models import delete, save, update
 from server.db import ProductTypesTable
-from server.schemas.product_type import ProductType, ProductTypeCreate, ProductTypeUpdate
+from server.schemas.product_type import (
+    ProductType,
+    ProductTypeCreate,
+    ProductTypeUpdate,
+)
 
 router = APIRouter()
 

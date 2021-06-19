@@ -26,7 +26,15 @@ from server.utils.json import json_dumps, json_loads
 logger = structlog.get_logger(__name__)
 
 
-__all__ = ("generate_form", "post_process", "FormException", "FormNotCompleteError", "FormValidationError", "FormPage", "ReadOnlyField")
+__all__ = (
+    "generate_form",
+    "post_process",
+    "FormException",
+    "FormNotCompleteError",
+    "FormValidationError",
+    "FormPage",
+    "ReadOnlyField",
+)
 
 
 class FormException(Exception):
@@ -66,7 +74,9 @@ class FormValidationError(FormException):
 
 
 def generate_form(
-    form_generator: Optional[StateInputFormGenerator], state: State, user_inputs: List[State]
+    form_generator: Optional[StateInputFormGenerator],
+    state: State,
+    user_inputs: List[State],
 ) -> Optional[InputForm]:
     """Generate form using form generator as defined by a workflow."""
     try:
@@ -80,7 +90,11 @@ def generate_form(
     return None
 
 
-def post_process(form_generator: Optional[StateInputFormGenerator], state: State, user_inputs: List[State]) -> State:
+def post_process(
+    form_generator: Optional[StateInputFormGenerator],
+    state: State,
+    user_inputs: List[State],
+) -> State:
     """Post process user_input based on form definition from workflow."""
 
     # there is no form_generator so we return no validated data
@@ -104,7 +118,9 @@ def post_process(form_generator: Optional[StateInputFormGenerator], state: State
             try:
                 form_validated_data = generated_form(**user_input)
             except ValidationError as e:
-                raise FormValidationError(e.model.__name__, e.errors()) from e  # type:ignore
+                raise FormValidationError(
+                    e.model.__name__, e.errors()
+                ) from e  # type:ignore
 
             # Update state with validated_data
             current_state.update(form_validated_data.dict())
@@ -158,4 +174,6 @@ def ReadOnlyField(
     const: Optional[bool] = None,
     **extra: Any,
 ) -> Any:
-    return Field(default, const=True, uniforms={"disabled": True, "value": default}, **extra)
+    return Field(
+        default, const=True, uniforms={"disabled": True, "value": default}, **extra
+    )

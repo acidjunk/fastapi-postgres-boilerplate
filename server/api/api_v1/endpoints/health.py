@@ -18,7 +18,10 @@ from fastapi.routing import APIRouter
 from sqlalchemy.exc import OperationalError
 
 from server.api.error_handling import raise_status
+from server.crud import user_crud
 from server.db import ProductsTable
+from server.schemas import UserCreate
+from server.settings import app_settings
 
 logger = structlog.get_logger(__name__)
 
@@ -34,3 +37,28 @@ def get_health() -> str:
         logger.debug("Health endpoint error details", error=str(e))
         raise_status(HTTPStatus.INTERNAL_SERVER_ERROR)
     return "OK"
+
+
+@router.get("/ping")
+def pong():
+    """
+    Sanity check.
+    This will let the user know that the service is operational.
+    And this path operation will:
+    * show a lifesign
+    """
+    logger.info("Creating initial data")
+    user = user_crud.get_by_email(email=app_settings.FIRST_SUPERUSER)
+    print(user)
+    if not user:
+        user_in = UserCreate(
+            email=app_settings.FIRST_SUPERUSER,
+            username=app_settings.FIRST_SUPERUSER,
+            password=app_settings.FIRST_SUPERUSER_PASSWORD,
+            is_superuser=True,
+        )
+        user = user_crud.create(obj_in=user_in)  # noqa: F841
+        logger.info("Initial data created")
+    else:
+        logger.info("Skipping creation: user already exists")
+    return {"ping": "pong!"}

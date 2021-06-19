@@ -42,7 +42,13 @@ from sqlalchemy.engine import Dialect
 from sqlalchemy.exc import DontWrapMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.orderinglist import ordering_list
-from sqlalchemy.orm import backref, column_property, deferred, object_session, relationship
+from sqlalchemy.orm import (
+    backref,
+    column_property,
+    deferred,
+    object_session,
+    relationship,
+)
 from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy_utils import TSVectorType, UUIDType
 
@@ -70,13 +76,19 @@ class UtcTimestamp(TypeDecorator):
 
     impl = sqlalchemy.types.TIMESTAMP(timezone=True)
 
-    def process_bind_param(self, value: Optional[datetime], dialect: Dialect) -> Optional[datetime]:
+    def process_bind_param(
+        self, value: Optional[datetime], dialect: Dialect
+    ) -> Optional[datetime]:
         if value is not None:
             if value.tzinfo is None:
-                raise UtcTimestampException(f"Expected timestamp with tzinfo. Got naive timestamp {value!r} instead")
+                raise UtcTimestampException(
+                    f"Expected timestamp with tzinfo. Got naive timestamp {value!r} instead"
+                )
         return value
 
-    def process_result_value(self, value: Optional[datetime], dialect: Dialect) -> Optional[datetime]:
+    def process_result_value(
+        self, value: Optional[datetime], dialect: Dialect
+    ) -> Optional[datetime]:
         if value is not None:
             return value.astimezone(timezone.utc)
         return value
@@ -95,7 +107,11 @@ class RolesTable(BaseModel):
     id = Column(UUIDType, server_default=text("uuid_generate_v4()"), primary_key=True)
     name = Column(String(255), nullable=False, unique=True)
     created_at = Column(UtcTimestamp, default=datetime.now(tz=pytz.utc))
-    updated_at = Column(UtcTimestamp, default=datetime.now(tz=pytz.utc), onupdate=datetime.now(tz=pytz.utc))
+    updated_at = Column(
+        UtcTimestamp,
+        default=datetime.now(tz=pytz.utc),
+        onupdate=datetime.now(tz=pytz.utc),
+    )
 
 
 class UsersTable(BaseModel):
@@ -108,7 +124,11 @@ class UsersTable(BaseModel):
     is_active = Column(Boolean, nullable=False, default=True)
     is_superuser = Column(Boolean, nullable=False, default=False)
     created_at = Column(UtcTimestamp, default=datetime.now(tz=pytz.utc))
-    updated_at = Column(UtcTimestamp, default=datetime.now(tz=pytz.utc), onupdate=datetime.now(tz=pytz.utc))
+    updated_at = Column(
+        UtcTimestamp,
+        default=datetime.now(tz=pytz.utc),
+        onupdate=datetime.now(tz=pytz.utc),
+    )
 
     roles = relationship("RolesTable", secondary="roles_users", lazy="joined")
 
@@ -119,7 +139,9 @@ class ProductsTable(BaseModel):
     id = Column(UUIDType, server_default=text("uuid_generate_v4()"), primary_key=True)
     name = Column(String(), nullable=False, unique=True)
     description = Column(Text(), nullable=False)
-    created_at = Column(UtcTimestamp, nullable=False, server_default=text("current_timestamp()"))
+    created_at = Column(
+        UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
+    )
 
 
 class ProductTypesTable(BaseModel):
@@ -138,4 +160,6 @@ class MapsTable(BaseModel):
     size_x = Column(Integer, default=100)
     size_y = Column(Integer, default=100)
     status = Column(String(255), nullable=False, default="new")
-    created_at = Column(UtcTimestamp, nullable=False, server_default=text("current_timestamp()"))
+    created_at = Column(
+        UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
+    )

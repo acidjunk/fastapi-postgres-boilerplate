@@ -3,8 +3,10 @@ from server.db.models import ProductTypesTable
 from server.schemas.product_type import ProductTypeCreate, ProductTypeUpdate
 
 
-class CRUDProductType(CRUDBase[ProductTypesTable, ProductTypeCreate, ProductTypeUpdate]):
+class CRUDProductType(
+    CRUDBase[ProductTypesTable, ProductTypeCreate, ProductTypeUpdate]
+):
     pass
 
 
-product_crud = CRUDProductType(ProductTypesTable)
+product_type_crud = CRUDProductType(ProductTypesTable)

@@ -15,5 +15,6 @@ class TestModels(TestCase):
 
         assert excinfo.value.status_code == HTTPStatus.BAD_REQUEST
         assert (
-            excinfo.value.detail == "Missing attributes 'name, description' for ProductsTable"
+            excinfo.value.detail
+            == "Missing attributes 'name, description' for ProductsTable"
         )

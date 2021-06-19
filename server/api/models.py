@@ -38,10 +38,17 @@ def validate(cls: Type, json_dict: Dict, is_new_instance: bool = True) -> Dict:
     }
     required_attributes: Iterable[str] = required_columns.keys()
     if is_new_instance:
-        required_attributes = filter(lambda k: not required_columns[k].primary_key, required_attributes)
-    missing_attributes = list(filter(lambda key: key not in json_dict, required_attributes))
+        required_attributes = filter(
+            lambda k: not required_columns[k].primary_key, required_attributes
+        )
+    missing_attributes = list(
+        filter(lambda key: key not in json_dict, required_attributes)
+    )
     if len(missing_attributes) != 0:
-        raise_status(HTTPStatus.BAD_REQUEST, f"Missing attributes '{', '.join(missing_attributes)}' for {cls.__name__}")
+        raise_status(
+            HTTPStatus.BAD_REQUEST,
+            f"Missing attributes '{', '.join(missing_attributes)}' for {cls.__name__}",
+        )
     return json_dict
 
 
@@ -69,7 +76,9 @@ def create_or_update(cls: Type, obj: BaseModel) -> None:
 
 def update(cls: Type, base_model: BaseModel) -> None:
     json_dict = transform_json(base_model.dict())
-    pk = list({k: v for k, v in cls.__table__.columns._data.items() if v.primary_key}.keys())[0]
+    pk = list(
+        {k: v for k, v in cls.__table__.columns._data.items() if v.primary_key}.keys()
+    )[0]
     instance = cls.query.filter(cls.__dict__[pk] == json_dict[pk])
     if not instance:
         raise_status(HTTPStatus.NOT_FOUND)
@@ -81,7 +90,9 @@ def update(cls: Type, base_model: BaseModel) -> None:
 
 
 def delete(cls: Type, primary_key: UUID) -> None:
-    pk = list({k: v for k, v in cls.__table__.columns._data.items() if v.primary_key}.keys())[0]
+    pk = list(
+        {k: v for k, v in cls.__table__.columns._data.items() if v.primary_key}.keys()
+    )[0]
     row_count = cls.query.filter(cls.__dict__[pk] == primary_key).delete()
     db.session.commit()
     if row_count > 0:
@@ -108,7 +119,9 @@ def cleanse_json(json_dict: Dict) -> None:
         if forbidden in json_dict:
             del json_dict[forbidden]
         rel: Dict
-        for rel in flatten(list(filter(lambda i: isinstance(i, list), json_dict.values()))):
+        for rel in flatten(
+            list(filter(lambda i: isinstance(i, list), json_dict.values()))
+        ):
             cleanse_json(rel)
 
 
@@ -120,10 +133,14 @@ def parse_date_fields(json_dict: Dict) -> None:
                 json_dict[date_field] = datetime.fromtimestamp(val / 1e3)
             if isinstance(val, str):
                 timestamp = isoparse(val)
-                assert timestamp.tzinfo is not None, "All timestamps should contain timezone information."
+                assert (
+                    timestamp.tzinfo is not None
+                ), "All timestamps should contain timezone information."
                 json_dict[date_field] = timestamp
         rel: Dict
-        for rel in flatten(list(filter(lambda i: isinstance(i, list), json_dict.values()))):
+        for rel in flatten(
+            list(filter(lambda i: isinstance(i, list), json_dict.values()))
+        ):
             parse_date_fields(rel)
 
 
@@ -137,7 +154,9 @@ def transform_json(json_dict: Dict) -> Dict:
     def _parse(item: Tuple[str, Any]) -> Tuple[str, Any]:
         if isinstance(item[1], list):
             cls = deserialization_mapping[item[0]]
-            return item[0], list(map(lambda i: cls(**_do_transform(i.items())), item[1]))
+            return item[0], list(
+                map(lambda i: cls(**_do_transform(i.items())), item[1])
+            )
         return item
 
     cleanse_json(json_dict)

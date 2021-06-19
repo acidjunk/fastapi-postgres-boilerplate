@@ -42,11 +42,7 @@ def fetch(product_type: Optional[str] = None) -> List[Product]:
 
 @router.get("/{id}", response_model=Product)
 def product_by_id(id: UUID) -> ProductsTable:
-    product = (
-        ProductsTable.query
-        .filter_by(id=id)
-        .first()
-    )
+    product = ProductsTable.query.filter_by(id=id).first()
     if not product:
         raise_status(HTTPStatus.NOT_FOUND, f"Product id {id} not found")
     return product

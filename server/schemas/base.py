@@ -15,6 +15,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+
 class BoilerplateBaseModel(BaseModel):
     class Config:
         json_encoders = {

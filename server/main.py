@@ -27,7 +27,10 @@ from server.api.api_v1.api import api_router
 from server.api.error_handling import ProblemDetailException
 from server.db import db
 from server.db.database import DBSessionMiddleware
-from server.exception_handlers.generic_exception_handlers import form_error_handler, problem_detail_handler
+from server.exception_handlers.generic_exception_handlers import (
+    form_error_handler,
+    problem_detail_handler,
+)
 from server.forms import FormException
 from server.settings import app_settings
 from server.version import GIT_COMMIT_HASH
@@ -39,12 +42,12 @@ structlog.configure(
         structlog.dev.set_exc_info,
         structlog.processors.format_exc_info,
         structlog.processors.TimeStamper(),
-        structlog.dev.ConsoleRenderer()
+        structlog.dev.ConsoleRenderer(),
     ],
     wrapper_class=structlog.make_filtering_bound_logger(logging.NOTSET),
     context_class=dict,
     logger_factory=structlog.PrintLoggerFactory(),
-    cache_logger_on_first_use=False
+    cache_logger_on_first_use=False,
 )
 
 logger = structlog.get_logger(__name__)
@@ -59,10 +62,24 @@ app = FastAPI(
     default_response_class=JSONResponse,
     # root_path="/prod",
     servers=[
-        {"url": "https://postgres-boilerplate.renedohmen.nl", "description": "Test environment"} if os.getenv("ENVIRONMENT") == "production" else {"url": "http://localhost:8080", "description": "Local environment"},
-        {"url": "https://boilerplate.dev.banaan.org", "description": "Development environment"},
-        {"url": "https://boilerplate.staging.banaan.org", "description": "Staging environment"},
-        {"url": "https://boilerplate.banaan.org", "description": "Production environment"},
+        {
+            "url": "https://postgres-boilerplate.renedohmen.nl",
+            "description": "Test environment",
+        }
+        if os.getenv("ENVIRONMENT") == "production"
+        else {"url": "http://localhost:8080", "description": "Local environment"},
+        {
+            "url": "https://boilerplate.dev.banaan.org",
+            "description": "Development environment",
+        },
+        {
+            "url": "https://boilerplate.staging.banaan.org",
+            "description": "Staging environment",
+        },
+        {
+            "url": "https://boilerplate.banaan.org",
+            "description": "Production environment",
+        },
     ],
 )
 
@@ -83,20 +100,11 @@ app.add_exception_handler(FormException, form_error_handler)
 app.add_exception_handler(ProblemDetailException, problem_detail_handler)
 
 
-@app.router.get("/", response_model=str, response_class=JSONResponse, include_in_schema=False)
+@app.router.get(
+    "/", response_model=str, response_class=JSONResponse, include_in_schema=False
+)
 def index() -> str:
     return "FastAPI boilerplate backend root"
-
-
-@app.get("/ping")
-def pong():
-    """
-    Sanity check.
-    This will let the user know that the service is operational.
-    And this path operation will:
-    * show a lifesign
-    """
-    return {"ping": "pong!"}
 
 
 logger.info("App is running")

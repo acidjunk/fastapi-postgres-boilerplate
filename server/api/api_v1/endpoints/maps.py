@@ -38,11 +38,7 @@ def fetch(status: Optional[str] = None) -> List[Map]:
 
 @router.get("/{id}", response_model=Map)
 def map_by_id(id: UUID) -> MapsTable:
-    map = (
-        MapsTable.query
-        .filter_by(id=id)
-        .first()
-    )
+    map = MapsTable.query.filter_by(id=id).first()
     if not map:
         raise_status(HTTPStatus.NOT_FOUND, f"Map id {id} not found")
     return map

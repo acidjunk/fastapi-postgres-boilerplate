@@ -63,7 +63,10 @@ class ApiException(Exception):
     headers: Dict[str, str]
 
     def __init__(
-        self, status: Optional[HTTPStatus] = None, reason: Optional[str] = None, http_resp: Optional[object] = None
+        self,
+        status: Optional[HTTPStatus] = None,
+        reason: Optional[str] = None,
+        http_resp: Optional[object] = None,
     ):
         super().__init__(status, reason, http_resp)
         if http_resp:
@@ -147,7 +150,11 @@ def error_state_to_dict(err: ErrorState) -> ErrorDict:
                 "headers": "\n".join(f"{k}: {v}" for k, v in err.headers.items()),
                 "traceback": err,
             }
-        return {"class": type(err).__name__, "error": str(err), "traceback": show_ex(err)}
+        return {
+            "class": type(err).__name__,
+            "error": str(err),
+            "traceback": show_ex(err),
+        }
     elif isinstance(err, tuple):
         cast(Tuple, err)
         error, status_code = err
@@ -166,7 +173,9 @@ def post_mortem(debugger: str, error: ErrorState) -> ErrorState:
             try:
                 import web_pdb
             except ImportError:
-                logger.critical("web_pd could not be imported for post mortem debugging")
+                logger.critical(
+                    "web_pd could not be imported for post mortem debugging"
+                )
                 return error
             web_pdb.post_mortem(error.__traceback__)
         elif debugger == "print":

@@ -9,12 +9,18 @@ from server.utils.date_utils import nowtz
 
 def test_transactional():
     def insert_p(state):
-        p = ProductsTable(name="Test transactional", description="Testing 1, 2, 3!", created_at=nowtz())
+        p = ProductsTable(
+            name="Test transactional",
+            description="Testing 1, 2, 3!",
+            created_at=nowtz(),
+        )
         db.session.add(p)
 
     def insert_p_error(state):
         p = ProductsTable(
-            name="Test transactional [ERROR]", description="Testing 1, 2, 3! BOOM!", created_at=nowtz()
+            name="Test transactional [ERROR]",
+            description="Testing 1, 2, 3! BOOM!",
+            created_at=nowtz(),
         )
         db.session.add(p)
         raise Exception("Let's wreck some havoc!")
@@ -48,7 +54,9 @@ def test_transactional():
 def test_transactional_no_commit():
     def insert_p(state):
         p = ProductsTable(
-            name="Test transactional should not be committed", description="Testing 1, 2, 3!", created_at=nowtz()
+            name="Test transactional should not be committed",
+            description="Testing 1, 2, 3!",
+            created_at=nowtz(),
         )
         db.session.add(p)
         db.session.commit()
@@ -62,7 +70,9 @@ def test_transactional_no_commit():
             insert_p({})
 
     assert (
-        db.session.query(ProductsTable).filter(ProductsTable.name == "Test transactional should not be committed").all()
+        db.session.query(ProductsTable)
+        .filter(ProductsTable.name == "Test transactional should not be committed")
+        .all()
         == []
     )
     logger.assert_has_calls(
@@ -77,7 +87,9 @@ def test_transactional_no_commit():
 def test_transactional_no_commit_second_thread():
     def insert_p(state):
         p = ProductsTable(
-            name="Test transactional should not be committed", description="Testing 1, 2, 3!", created_at=nowtz()
+            name="Test transactional should not be committed",
+            description="Testing 1, 2, 3!",
+            created_at=nowtz(),
         )
         db.session.add(p)
         db.session.commit()
@@ -88,7 +100,9 @@ def test_transactional_no_commit_second_thread():
 
         with db.database_scope():
             p2 = ProductsTable(
-                name="Test transactional should be committed", description="Testing 1, 2, 3!", created_at=nowtz()
+                name="Test transactional should be committed",
+                description="Testing 1, 2, 3!",
+                created_at=nowtz(),
             )
             db.session.add(p2)
             db.session.commit()
@@ -101,9 +115,15 @@ def test_transactional_no_commit_second_thread():
         with transactional(db, logger):
             insert_p({})
 
-    assert db.session.query(ProductsTable).filter(ProductsTable.name == "Test transactional should be committed").one()
     assert (
-        db.session.query(ProductsTable).filter(ProductsTable.name == "Test transactional should not be committed").all()
+        db.session.query(ProductsTable)
+        .filter(ProductsTable.name == "Test transactional should be committed")
+        .one()
+    )
+    assert (
+        db.session.query(ProductsTable)
+        .filter(ProductsTable.name == "Test transactional should not be committed")
+        .all()
         == []
     )
     logger.assert_has_calls(

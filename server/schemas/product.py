@@ -41,7 +41,6 @@ class ProductUpdate(ProductBase):
 class ProductInDBBase(ProductBase):
     id: UUID
     created_at: datetime
-    updated_at: datetime
 
     class Config:
         orm_mode = True
@@ -49,5 +48,4 @@ class ProductInDBBase(ProductBase):
 
 # Additional properties to return via API
 class Product(ProductInDBBase):
-    created_at: datetime
-    updated_at: datetime
+    pass

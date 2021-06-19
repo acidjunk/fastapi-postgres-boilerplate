@@ -30,6 +30,7 @@ class ProductTypeBase(BoilerplateBaseModel):
 class ProductTypeCreate(ProductTypeBase):
     pass
 
+
 # Properties to receive via API on update
 class ProductTypeUpdate(ProductTypeBase):
     pass

@@ -13,7 +13,18 @@
 
 from contextlib import contextmanager
 from contextvars import ContextVar
-from typing import Any, Callable, ClassVar, Dict, Generator, Iterator, List, Optional, Set, cast
+from typing import (
+    Any,
+    Callable,
+    ClassVar,
+    Dict,
+    Generator,
+    Iterator,
+    List,
+    Optional,
+    Set,
+    cast,
+)
 from uuid import uuid4
 
 import structlog
@@ -57,7 +68,9 @@ class BaseModelMeta(DeclarativeMeta):
         if self._query is not None:
             return self._query
         else:
-            raise NoSessionError("Cant get session. Please, call BaseModel.set_query() first")
+            raise NoSessionError(
+                "Cant get session. Please, call BaseModel.set_query() first"
+            )
 
 
 @as_declarative(metaclass=BaseModelMeta)
@@ -174,7 +187,12 @@ ENGINE_ARGUMENTS = {
     "json_serializer": json_dumps,
     "json_deserializer": json_loads,
 }
-SESSION_ARGUMENTS = {"class_": WrappedSession, "autocommit": False, "autoflush": True, "query_cls": SearchQuery}
+SESSION_ARGUMENTS = {
+    "class_": WrappedSession,
+    "autocommit": False,
+    "autoflush": True,
+    "query_cls": SearchQuery,
+}
 
 
 class Database:
@@ -188,10 +206,10 @@ class Database:
     easily start a new session or get the existing one using the scoped_session mechanics.
     """
 
-    def __init__(
-        self, db_url: str
-    ) -> None:
-        self.request_context: ContextVar[str] = ContextVar("request_context", default="")
+    def __init__(self, db_url: str) -> None:
+        self.request_context: ContextVar[str] = ContextVar(
+            "request_context", default=""
+        )
         self.engine = create_engine(db_url, **ENGINE_ARGUMENTS)
         self.session_factory = sessionmaker(bind=self.engine, **SESSION_ARGUMENTS)
 
@@ -229,7 +247,9 @@ class DBSessionMiddleware(BaseHTTPMiddleware):
         self.commit_on_exit = commit_on_exit
         self.database = database
 
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
         with self.database.database_scope():
             response = await call_next(request)
         return response

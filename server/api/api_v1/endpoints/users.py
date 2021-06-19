@@ -3,8 +3,8 @@ from typing import Any, List
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
-from sqlalchemy.orm import Session
 
+from server.db import db
 from server.api import deps
 from server.crud import user_crud
 from server.db.models import UsersTable
@@ -19,12 +19,12 @@ router = APIRouter()
 def read_users(
     skip: int = 0,
     limit: int = 100,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: UsersTable = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Retrieve users.
     """
-    users = crud.user.get_multi(db, skip=skip, limit=limit)
+    users = user_crud.get_multi(db, skip=skip, limit=limit)
     return users
 
 
@@ -32,7 +32,7 @@ def read_users(
 def create_user(
     *,
     user_in: UserCreate,
-    current_user: models.User = Depends(deps.get_current_active_superuser),
+    current_user: UsersTable = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Create new user.
@@ -74,7 +74,8 @@ def update_user_me(
     return user
 
 
-@router.get("/me", response_model=UsersTable)
+# @router.get("/me", response_model=UsersTable)
+@router.get("/me", response_model=User)
 def read_user_me(
     current_user: UsersTable = Depends(deps.get_current_active_user),
 ) -> Any:
@@ -111,7 +112,7 @@ def read_user_me(
 #     return user
 
 
-@router.get("/{user_id}", response_model=UsersTable)
+@router.get("/{user_id}", response_model=User)
 def read_user_by_id(
     user_id: int,
     current_user: UsersTable = Depends(deps.get_current_active_user),
@@ -129,7 +130,7 @@ def read_user_by_id(
     return user
 
 
-@router.put("/{user_id}", response_model=UsersTable)
+@router.put("/{user_id}", response_model=User)
 def update_user(
     *,
     user_id: int,

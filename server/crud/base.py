@@ -60,13 +60,23 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                 # treat the key as the value
                 if len(value) > 0:
                     if key in sa_inspect(self.model).columns.keys():
-                        conditions.append(cast(self.model.__dict__[key], String).ilike("%" + one(value) + "%"))
+                        conditions.append(
+                            cast(self.model.__dict__[key], String).ilike(
+                                "%" + one(value) + "%"
+                            )
+                        )
                     else:
-                        logger.info(f"Key: not found in database model key={key}, model={self.model}")
+                        logger.info(
+                            f"Key: not found in database model key={key}, model={self.model}"
+                        )
                     query = query.filter(or_(*conditions))
                 else:
                     for column in sa_inspect(self.model).columns.keys():
-                        conditions.append(cast(self.model.__dict__[column], String).ilike("%" + key + "%"))
+                        conditions.append(
+                            cast(self.model.__dict__[column], String).ilike(
+                                "%" + key + "%"
+                            )
+                        )
                     query = query.filter(or_(*conditions))
 
         if sort_parameters and len(sort_parameters):
@@ -75,27 +85,39 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                     sort_col, sort_order = sort_parameter.split(":")
                     if sort_col in sa_inspect(self.model).columns.keys():
                         if sort_order.upper() == "DESC":
-                            query = query.order_by(expression.desc(self.model.__dict__[sort_col]))
+                            query = query.order_by(
+                                expression.desc(self.model.__dict__[sort_col])
+                            )
                         else:
-                            query = query.order_by(expression.asc(self.model.__dict__[sort_col]))
+                            query = query.order_by(
+                                expression.asc(self.model.__dict__[sort_col])
+                            )
                     else:
                         logger.debug(f"Sort col does not exist sort_col={sort_col}")
                 except ValueError:
                     if sort_parameter in sa_inspect(self.model).columns.keys():
-                        query = query.order_by(expression.asc(self.model.__dict__[sort_parameter]))
+                        query = query.order_by(
+                            expression.asc(self.model.__dict__[sort_parameter])
+                        )
                     else:
-                        logger.debug(f"Sort param does not exist sort_parameter={sort_parameter}")
+                        logger.debug(
+                            f"Sort param does not exist sort_parameter={sort_parameter}"
+                        )
 
         # Generate Content Range Header Values
         count = query.count()
 
         if limit:
             # Limit is not 0: use limit
-            response_range = "{}s {}-{}/{}".format(self.model.__name__.lower(), skip, skip + limit, count)
+            response_range = "{}s {}-{}/{}".format(
+                self.model.__name__.lower(), skip, skip + limit, count
+            )
             return query.offset(skip).limit(limit).all(), response_range
         else:
             # Limit is 0: unlimited
-            response_range = "{}s {}/{}".format(self.model.__name__.lower(), skip, count)
+            response_range = "{}s {}/{}".format(
+                self.model.__name__.lower(), skip, count
+            )
             return query.offset(skip).all(), response_range
 
     def create(self, *, obj_in: CreateSchemaType) -> ModelType:
@@ -106,7 +128,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.refresh(db_obj)
         return db_obj
 
-    def update(self, db_session: Session, *, db_obj: ModelType, obj_in: UpdateSchemaType) -> ModelType:
+    def update(self, *, db_obj: ModelType, obj_in: UpdateSchemaType) -> ModelType:
         obj_data = jsonable_encoder(db_obj)
         update_data = obj_in.dict(exclude_unset=True)
 
@@ -119,9 +141,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         for field in obj_data:
             if field != "id" and field in update_data:
                 setattr(db_obj, field, update_data[field])
-        db_session.add(db_obj)
-        db_session.commit()
-        db_session.refresh(db_obj)
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
         return db_obj
 
     def delete(self, db_session: Session, *, id: str) -> ModelType:

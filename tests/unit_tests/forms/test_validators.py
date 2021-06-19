@@ -29,11 +29,15 @@ def test_constrained_list_constraints():
 
     with pytest.raises(ValidationError) as exc_info:
         UniqueConListModel(v=[1, 1, 1])
-    assert exc_info.value.errors() == [{"loc": ("v",), "msg": "Items must be unique", "type": "value_error"}]
+    assert exc_info.value.errors() == [
+        {"loc": ("v",), "msg": "Items must be unique", "type": "value_error"}
+    ]
 
     with pytest.raises(ValidationError) as exc_info:
         UniqueConListModel(v=1)
-    assert exc_info.value.errors() == [{"loc": ("v",), "msg": "value is not a valid list", "type": "type_error.list"}]
+    assert exc_info.value.errors() == [
+        {"loc": ("v",), "msg": "value is not a valid list", "type": "type_error.list"}
+    ]
 
     with pytest.raises(ValidationError) as exc_info:
         UniqueConListModel(v=[])

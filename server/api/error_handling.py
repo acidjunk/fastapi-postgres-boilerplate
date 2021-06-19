@@ -36,8 +36,14 @@ class ProblemDetailException(HTTPException):
         self.type = error_type
 
 
-def raise_status(status: int, detail: Any = None, headers: Optional[Union[MutableHeaders, Dict]] = None) -> NoReturn:
+def raise_status(
+    status: int,
+    detail: Any = None,
+    headers: Optional[Union[MutableHeaders, Dict]] = None,
+) -> NoReturn:
     status = HTTPStatus(status)
     if isinstance(headers, MutableHeaders):
         headers = dict(**headers)
-    raise ProblemDetailException(status=status.value, title=status.phrase, detail=detail, headers=headers)
+    raise ProblemDetailException(
+        status=status.value, title=status.phrase, detail=detail, headers=headers
+    )

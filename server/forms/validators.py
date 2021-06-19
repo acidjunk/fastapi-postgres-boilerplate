@@ -12,7 +12,17 @@
 # limitations under the License.
 
 from types import new_class
-from typing import Any, ClassVar, Dict, Generator, List, Optional, Type, TypeVar, get_args
+from typing import (
+    Any,
+    ClassVar,
+    Dict,
+    Generator,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    get_args,
+)
 
 import structlog
 from pydantic import ConstrainedList
@@ -58,11 +68,15 @@ class UniqueConstrainedList(ConstrainedList, List[T]):
         # This makes a lot of assuptions about the internals of `typing`
         if "__orig_bases__" in cls.__dict__ and cls.__dict__["__orig_bases__"]:
             generic_base_cls = cls.__dict__["__orig_bases__"][0]
-            if (not hasattr(cls, "item_type") or isinstance(cls.item_type, TypeVar)) and get_args(generic_base_cls):
+            if (
+                not hasattr(cls, "item_type") or isinstance(cls.item_type, TypeVar)
+            ) and get_args(generic_base_cls):
                 cls.item_type = get_args(generic_base_cls)[0]
 
         # Make sure __args__ is set
-        assert hasattr(cls, "item_type"), "Missing a concrete value for generic type argument"
+        assert hasattr(
+            cls, "item_type"
+        ), "Missing a concrete value for generic type argument"
 
         cls.__args__ = (cls.item_type,)
 
@@ -91,7 +105,10 @@ def unique_conlist(
     }
     # We use new_class to be able to deal with Generic types
     return new_class(
-        "ConstrainedListValue", (UniqueConstrainedList[item_type],), {}, lambda ns: ns.update(namespace)  # type:ignore
+        "ConstrainedListValue",
+        (UniqueConstrainedList[item_type],),
+        {},
+        lambda ns: ns.update(namespace),  # type:ignore
     )
 
 
@@ -107,7 +124,11 @@ def remove_empty_items(v: list) -> list:
         []
     """
     if v:
-        return list(filter(lambda i: bool(i) and (not isinstance(i, dict) or any(i.values())), v))
+        return list(
+            filter(
+                lambda i: bool(i) and (not isinstance(i, dict) or any(i.values())), v
+            )
+        )
     return v
 
 
@@ -198,7 +219,10 @@ def choice_list(
     }
     # We use new_class to be able to deal with Generic types
     return new_class(
-        "ChoiceListValue", (ChoiceList[item_type],), {}, lambda ns: ns.update(namespace)  # type:ignore
+        "ChoiceListValue",
+        (ChoiceList[item_type],),
+        {},
+        lambda ns: ns.update(namespace),  # type:ignore
     )
 
 
@@ -223,9 +247,13 @@ class Summary(DisplayOnlyFieldType):
 
     @classmethod
     def __modify_schema__(cls, field_schema: Dict[str, Any]) -> None:
-        field_schema.update(format="summary", type="string", uniforms={"data": cls.data})
+        field_schema.update(
+            format="summary", type="string", uniforms={"data": cls.data}
+        )
 
 
 def summary(data: Optional[SummaryData] = None) -> Type[Summary]:
     namespace = {"data": data}
-    return new_class("MigrationSummaryValue", (Summary,), {}, lambda ns: ns.update(namespace))
+    return new_class(
+        "MigrationSummaryValue", (Summary,), {}, lambda ns: ns.update(namespace)
+    )
