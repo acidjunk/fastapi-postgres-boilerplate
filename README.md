@@ -8,7 +8,7 @@ If you want to use a virtual environment first create the environment:
 
 ```shell
 python3 -m venv .venv
-source .venv/bin/activate
+source venv/bin/activate
 ```
 
 You can install the required libraries with pip. The following command will install all the required
