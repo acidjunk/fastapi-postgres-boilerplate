@@ -88,8 +88,14 @@ class RolesTable(BaseModel):
 
     id = Column(UUIDType, server_default=text("uuid_generate_v4()"), primary_key=True)
     name = Column(String(255), nullable=False, unique=True)
-    created_at = Column(UtcTimestamp, nullable=False, server_default=text("current_timestamp()"))
-    updated_at = Column(UtcTimestamp, default=datetime.now(tz=pytz.utc), onupdate=datetime.now(tz=pytz.utc))
+    created_at = Column(
+        UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
+    )
+    updated_at = Column(
+        UtcTimestamp,
+        default=datetime.now(tz=pytz.utc),
+        onupdate=datetime.now(tz=pytz.utc),
+    )
 
 
 class UsersTable(BaseModel):
@@ -101,8 +107,15 @@ class UsersTable(BaseModel):
     hashed_password = Column(String(255), nullable=False)
     is_active = Column(Boolean, nullable=False, default=True)
     is_superuser = Column(Boolean, nullable=False, default=False)
-    created_at = Column(UtcTimestamp, nullable=False, server_default=text("current_timestamp()"))
-    updated_at = Column(UtcTimestamp, server_default=text("current_timestamp()"), onupdate=nowtz, nullable=False)
+    created_at = Column(
+        UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
+    )
+    updated_at = Column(
+        UtcTimestamp,
+        server_default=text("current_timestamp()"),
+        onupdate=nowtz,
+        nullable=False,
+    )
 
     roles = relationship("RolesTable", secondary="roles_users", lazy="joined")
 
@@ -134,5 +147,12 @@ class MapsTable(BaseModel):
     size_x = Column(Integer, default=100)
     size_y = Column(Integer, default=100)
     status = Column(String(255), nullable=False, default="new")
-    created_at = Column(UtcTimestamp, nullable=False, server_default=text("current_timestamp()"))
-    updated_at = Column(UtcTimestamp, server_default=text("current_timestamp()"), onupdate=nowtz, nullable=False)
+    created_at = Column(
+        UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
+    )
+    updated_at = Column(
+        UtcTimestamp,
+        server_default=text("current_timestamp()"),
+        onupdate=nowtz,
+        nullable=False,
+    )

@@ -7,6 +7,6 @@ __all__ = [
     "user_crud",
     "map_crud",
     "product_crud",
-    "product_type_crud"
+    "product_type_crud",
     # "crud_product",
 ]

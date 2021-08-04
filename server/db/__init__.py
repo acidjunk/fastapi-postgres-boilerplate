@@ -28,8 +28,7 @@ __all__ = [
     "transactional",
     "ProductsTable",
     "ProductTypesTable",
-    "MapsTable"
-    "UtcTimestamp",
+    "MapsTable" "UtcTimestamp",
     "UtcTimestampException",
     "db",
 ]
