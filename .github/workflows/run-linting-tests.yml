@@ -5,6 +5,8 @@ name: Linting tests
 
 on:
   push:
+    branches:
+      - '**'
 
 jobs:
   build:
