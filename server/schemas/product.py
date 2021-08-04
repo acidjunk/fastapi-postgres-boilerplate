@@ -12,7 +12,6 @@
 # limitations under the License.
 
 from datetime import datetime
-from typing import List, Optional
 from uuid import UUID
 
 from server.schemas.base import BoilerplateBaseModel
@@ -22,7 +21,6 @@ class ProductBase(BoilerplateBaseModel):
     name: str
     description: str
     # product_type: str
-    created_at: Optional[datetime]
 
     class Config:
         orm_mode = True
