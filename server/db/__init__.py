@@ -16,6 +16,7 @@ from server.db.database import Database, transactional
 from server.db.models import (  # noqa: F401
     ProductsTable,
     ProductTypesTable,
+    MapsTable,
     UtcTimestamp,
     UtcTimestampException,
 )
@@ -27,7 +28,7 @@ __all__ = [
     "transactional",
     "ProductsTable",
     "ProductTypesTable",
-    "UtcTimestamp",
+    "MapsTable" "UtcTimestamp",
     "UtcTimestampException",
     "db",
 ]

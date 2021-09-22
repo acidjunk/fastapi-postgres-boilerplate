@@ -6,7 +6,7 @@ My own fastapi postgres boilerplate
 This project only works with Python 3.8, 3.9 and 3.10.
 If you want to use a virtual environment first create the environment:
 
-```shell
+```bash
 python3 -m venv .venv
 source venv/bin/activate
 ```
@@ -15,33 +15,38 @@ You can install the required libraries with pip. The following command will inst
 libraries for the project. Check out the different files under requirements to more specifically see
 which library is used and for what reason.
 
-```shell
+```bash
 pip install -r ./requirements/all.txt
 ```
 
 A PostgreSQL user and two databases are required ('boilerplate' is the password used by default).
 
-```shell
+```bash
 createuser -sP boilerplate
 createdb boilerplate -O boilerplate
 createdb boilerplate-test -O boilerplate
 ```
 
 Now you should be able to start a hot reloading, api server:
-```shell
+```bash
 PYTHONPATH=. uvicorn server.main:app --reload --port 8080
 ```
 
 Or run a threaded server and auto-apply migrations on launch:
-```shell
+```bash
 /bin/server
 ````
+
+## Running tests
+```bash
+PYTHONPATH=. pytest tests/unit_tests
+```
 
 ## Configuring the server
 
 All configuration is done via ENV vars. 
 
-```shell
+```bash
 export SESSION_SECRET="SUPER_DUPER_SECRET"
 export TESTING=False
 ```
@@ -61,17 +66,23 @@ all needed data (e.g. examples etc.) and the Schema branch.
 
 To create a new schema migration:
 
-```shell
+```bash
 PYTHONPATH=. alembic revision --autogenerate -m "New schema" --head=schema@head
 ```
 
-This opens a new migration in `/migrations/version/`
+This opens a new migration in `/migrations/versions/`
+
+The initial scheme was created with:
+
+```bash
+PYTHONPATH=. alembic revision --autogenerate -m "Initial scheme" --head=schema@head --version-path=migrations/versions/schema
+```
 
 ### General Migration
 
 To create a data migration do the following:
 
-```shell
+```bash
 PYTHONPATH=. alembic revision --message "Name of the migration" --head=general@head
 ```
 

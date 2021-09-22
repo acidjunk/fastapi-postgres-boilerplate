@@ -14,47 +14,29 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Dict, List, Optional
+from typing import Optional
 
 import pytz
 import sqlalchemy
 import structlog
-from more_itertools import first_true
 from sqlalchemy import (
-    TIMESTAMP,
     Boolean,
-    CheckConstraint,
     Column,
     ForeignKey,
-    Index,
     Integer,
     String,
-    Table,
     Text,
     TypeDecorator,
-    and_,
-    select,
     text,
 )
-from sqlalchemy.dialects import postgresql as pg
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.engine import Dialect
 from sqlalchemy.exc import DontWrapMixin
-from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.ext.orderinglist import ordering_list
-from sqlalchemy.orm import (
-    backref,
-    column_property,
-    deferred,
-    object_session,
-    relationship,
-)
-from sqlalchemy.schema import UniqueConstraint
-from sqlalchemy_utils import TSVectorType, UUIDType
+from sqlalchemy.orm import relationship
+from sqlalchemy_utils import UUIDType
 
-from server.db.database import BaseModel, SearchQuery
+from server.db.database import BaseModel
 from server.utils.date_utils import nowtz
-from server.version import GIT_COMMIT_HASH
 
 logger = structlog.get_logger(__name__)
 
@@ -106,7 +88,9 @@ class RolesTable(BaseModel):
 
     id = Column(UUIDType, server_default=text("uuid_generate_v4()"), primary_key=True)
     name = Column(String(255), nullable=False, unique=True)
-    created_at = Column(UtcTimestamp, default=datetime.now(tz=pytz.utc))
+    created_at = Column(
+        UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
+    )
     updated_at = Column(
         UtcTimestamp,
         default=datetime.now(tz=pytz.utc),
@@ -123,11 +107,14 @@ class UsersTable(BaseModel):
     hashed_password = Column(String(255), nullable=False)
     is_active = Column(Boolean, nullable=False, default=True)
     is_superuser = Column(Boolean, nullable=False, default=False)
-    created_at = Column(UtcTimestamp, default=datetime.now(tz=pytz.utc))
+    created_at = Column(
+        UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
+    )
     updated_at = Column(
         UtcTimestamp,
-        default=datetime.now(tz=pytz.utc),
-        onupdate=datetime.now(tz=pytz.utc),
+        server_default=text("current_timestamp()"),
+        onupdate=nowtz,
+        nullable=False,
     )
 
     roles = relationship("RolesTable", secondary="roles_users", lazy="joined")
@@ -162,4 +149,10 @@ class MapsTable(BaseModel):
     status = Column(String(255), nullable=False, default="new")
     created_at = Column(
         UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
+    )
+    updated_at = Column(
+        UtcTimestamp,
+        server_default=text("current_timestamp()"),
+        onupdate=nowtz,
+        nullable=False,
     )
