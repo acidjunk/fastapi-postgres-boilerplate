@@ -207,3 +207,13 @@ def product_1():
     db.session.add(product)
     db.session.commit()
     return str(product.id)
+
+
+@pytest.fixture()
+def product_2():
+    product = ProductsTable(
+        name="Product 2", description="Product 2 description", created_at=nowtz()
+    )
+    db.session.add(product)
+    db.session.commit()
+    return str(product.id)

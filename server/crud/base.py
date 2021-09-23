@@ -41,11 +41,11 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self,
         *,
         skip: int = 0,
-        limit: int = 0,
+        limit: int = 100,
         filter_parameters: Optional[List[str]],
         sort_parameters: Optional[List[str]],
     ) -> Tuple[List[ModelType], str]:
-        query = db.query(self.model)
+        query = db.session.query(self.model)
 
         logger.debug(
             f"Filter and Sort parameters model={self.model}, sort_parameters={sort_parameters}, filter_parameters={filter_parameters}",

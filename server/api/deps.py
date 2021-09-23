@@ -1,5 +1,3 @@
-from typing import Generator
-
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
@@ -8,7 +6,7 @@ from pydantic import ValidationError
 from server.crud import user_crud
 from server.db import db
 from server.db.models import UsersTable
-from server.schemas import TokenPayload, User
+from server.schemas import TokenPayload
 from server.settings import app_settings
 
 reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"/api/login/access-token")
