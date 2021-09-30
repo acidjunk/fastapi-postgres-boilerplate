@@ -13,20 +13,8 @@
 
 from enum import Enum
 from http import HTTPStatus
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Generator,
-    List,
-    Literal,
-    Optional,
-    Tuple,
-    Type,
-    TypedDict,
-    TypeVar,
-    Union,
-)
+from typing import (Any, Callable, Dict, Generator, List, Literal, Optional,
+                    Tuple, Type, TypedDict, TypeVar, Union)
 
 from pydantic import BaseModel, EmailStr
 

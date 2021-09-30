@@ -7,7 +7,7 @@ from server.db import ProductsTable
 from server.utils.json import json_dumps
 
 
-def test_fetch_all_products(product_1, test_client):
+def test_products_get_multi(product_1, test_client):
     response = test_client.get("/api/products")
 
     assert HTTPStatus.OK == response.status_code
@@ -29,7 +29,7 @@ def test_product_by_id_404(product_1, test_client):
     assert HTTPStatus.NOT_FOUND == response.status_code
 
 
-def test_save(test_client):
+def test_product_create(test_client):
     p_id = uuid4()
     body = {
         "product_id": str(p_id),
@@ -47,7 +47,7 @@ def test_save(test_client):
     assert 1 == len(products)
 
 
-def test_delete(product_1, test_client):
+def test_product_delete(product_1, test_client):
     response = test_client.delete(f"/api/products/{product_1}")
     assert HTTPStatus.NO_CONTENT == response.status_code
     assert len(ProductsTable.query.all()) == 0

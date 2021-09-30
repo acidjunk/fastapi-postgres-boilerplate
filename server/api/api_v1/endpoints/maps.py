@@ -12,14 +12,17 @@
 # limitations under the License.
 
 from http import HTTPStatus
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 
-from fastapi.param_functions import Body
+from fastapi import HTTPException
+from fastapi.param_functions import Body, Depends
 from fastapi.routing import APIRouter
+from starlette.responses import Response
 
+from server.api.deps import common_parameters
 from server.api.error_handling import raise_status
-from server.api.models import delete, save, update
+from server.crud import map_crud
 from server.db.models import MapsTable
 from server.schemas import Map, MapCreate, MapUpdate
 
@@ -27,33 +30,45 @@ router = APIRouter()
 
 
 @router.get("/", response_model=List[Map])
-def fetch(status: Optional[str] = None) -> List[Map]:
-    query = MapsTable.query
-
-    if status:
-        query = query.filter(MapsTable.__dict__["status"] == status)
-
-    return query.all()
+def get_multi(
+    response: Response, common: dict = Depends(common_parameters)
+) -> List[Map]:
+    maps, header_range = map_crud.get_multi(
+        skip=common["skip"],
+        limit=common["limit"],
+        filter_parameters=common["filter"],
+        sort_parameters=common["sort"],
+    )
+    response.headers["Content-Range"] = header_range
+    return maps
 
 
 @router.get("/{id}", response_model=Map)
-def map_by_id(id: UUID) -> MapsTable:
-    map = MapsTable.query.filter_by(id=id).first()
+def get_by_id(id: UUID) -> MapsTable:
+    map = map_crud.get(id)
     if not map:
         raise_status(HTTPStatus.NOT_FOUND, f"Map id {id} not found")
     return map
 
 
 @router.post("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def save_map(data: MapCreate = Body(...)) -> None:
-    return save(MapsTable, data)
+def create(data: MapCreate = Body(...)) -> None:
+    return map_crud.create(obj_in=data)
 
 
-@router.put("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def update_map(data: MapUpdate = Body(...)) -> None:
-    return update(MapsTable, data)
+@router.put("/{map_id}", response_model=None, status_code=HTTPStatus.NO_CONTENT)
+def update(*, map_id: UUID, item_in: MapUpdate) -> None:
+    map = map_crud.get(id=map_id)
+    if not map:
+        raise HTTPException(status_code=404, detail="Map not found")
+
+    map = map_crud.update(
+        db_obj=map,
+        obj_in=item_in,
+    )
+    return map
 
 
 @router.delete("/{map_id}", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def delete_map(map_id: UUID) -> None:
-    return delete(MapsTable, map_id)
+def delete(map_id: UUID) -> None:
+    return map_crud.delete(id=map_id)

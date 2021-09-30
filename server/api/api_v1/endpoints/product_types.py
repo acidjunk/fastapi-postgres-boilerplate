@@ -15,45 +15,65 @@ from http import HTTPStatus
 from typing import List
 from uuid import UUID
 
-from fastapi.param_functions import Body
+from fastapi import HTTPException
+from fastapi.param_functions import Body, Depends
 from fastapi.routing import APIRouter
+from starlette.responses import Response
 
+from server.api.deps import common_parameters
 from server.api.error_handling import raise_status
-from server.api.models import delete, save, update
-from server.db import ProductTypesTable
-from server.schemas.product_type import (
-    ProductType,
-    ProductTypeCreate,
-    ProductTypeUpdate,
-)
+from server.crud import product_type_crud
+from server.db.models import ProductTypesTable
+from server.schemas import ProductType, ProductTypeCreate, ProductTypeUpdate
 
 router = APIRouter()
 
 
 @router.get("/", response_model=List[ProductType])
-def fetch() -> List[ProductType]:
-    return ProductTypesTable.query.all()
+def get_multi(
+    response: Response, common: dict = Depends(common_parameters)
+) -> List[ProductType]:
+    product_types, header_range = product_type_crud.get_multi(
+        skip=common["skip"],
+        limit=common["limit"],
+        filter_parameters=common["filter"],
+        sort_parameters=common["sort"],
+    )
+    response.headers["Content-Range"] = header_range
+    return product_types
 
 
 @router.get("/{id}", response_model=ProductType)
-def product_type_by_id(id: UUID) -> ProductType:
-    product_type = ProductTypesTable.query.filter_by(id=id).first()
+def get_by_id(id: UUID) -> ProductTypesTable:
+    product_type = product_type_crud.get(id)
     if not product_type:
-        raise_status(HTTPStatus.NOT_FOUND, f"Product type {id} not found")
+        raise_status(HTTPStatus.NOT_FOUND, f"ProductType id {id} not found")
     return product_type
 
 
 @router.post("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def save_product_type(data: ProductTypeCreate = Body(...)) -> None:
-    return save(ProductTypesTable, data)
+def create(data: ProductTypeCreate = Body(...)) -> None:
+    return product_type_crud.create(obj_in=data)
 
 
-@router.put("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def update_product_type(data: ProductTypeUpdate = Body(...)) -> None:
-    return update(ProductTypesTable, data)
+@router.put(
+    "/{product_type_id}", response_model=None, status_code=HTTPStatus.NO_CONTENT
+)
+def update(*, product_type_id: UUID, item_in: ProductTypeUpdate) -> None:
+    product_type = product_type_crud.get(id=product_type_id)
+    if not product_type:
+        raise HTTPException(status_code=404, detail="ProductType not found")
+
+    product_type = product_type_crud.update(
+        db_obj=product_type,
+        obj_in=item_in,
+    )
+    return product_type
 
 
-@router.delete("/{id}", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def delete_product_type(id: UUID) -> None:
+@router.delete(
+    "/{product_type_id}", response_model=None, status_code=HTTPStatus.NO_CONTENT
+)
+def delete(product_type_id: UUID) -> None:
     # Todo: check product first
-    return delete(ProductTypesTable, id)
+    return product_type_crud.delete(id=product_type_id)

@@ -2,8 +2,8 @@ from typing import Optional
 
 from fastapi.encoders import jsonable_encoder
 
-from server.db import db
 from server.crud.base import CRUDBase
+from server.db import db
 from server.db.models import MapsTable
 from server.schemas.map import MapCreate, MapUpdate
 

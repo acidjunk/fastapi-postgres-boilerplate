@@ -1,14 +1,14 @@
 import logging
-from typing import Generic, List, Optional, Tuple, Type, TypeVar
+from typing import (Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar,
+                    Union)
 
 from fastapi.encoders import jsonable_encoder
 from more_itertools import one
-from pydantic import BaseModel
 from sqlalchemy import String, cast, or_
 from sqlalchemy.inspection import inspect as sa_inspect
-from sqlalchemy.orm import Session
 from sqlalchemy.sql import expression
 
+from server.api.models import transform_json
 from server.db import db
 from server.db.database import BaseModel
 
@@ -35,7 +35,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self.model = model
 
     def get(self, id: str) -> Optional[ModelType]:
-        return db.query(self.model).get(id)
+        return db.session.query(self.model).get(id)
 
     def get_multi(
         self,
@@ -109,47 +109,45 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
         if limit:
             # Limit is not 0: use limit
-            response_range = "{}s {}-{}/{}".format(
-                self.model.__name__.lower(), skip, skip + limit, count
+            response_range = "{} {}-{}/{}".format(
+                self.model.__table__.name.lower(), skip, skip + limit, count
             )
             return query.offset(skip).limit(limit).all(), response_range
         else:
             # Limit is 0: unlimited
-            response_range = "{}s {}/{}".format(
-                self.model.__name__.lower(), skip, count
+            response_range = "{} {}/{}".format(
+                self.model.__table__.name.lower(), skip, count
             )
             return query.offset(skip).all(), response_range
 
     def create(self, *, obj_in: CreateSchemaType) -> ModelType:
-        obj_in_data = jsonable_encoder(obj_in)
+        obj_in_data = transform_json(obj_in.dict())
         db_obj = self.model(**obj_in_data)
-        db.add(db_obj)
-        db.commit()
-        db.refresh(db_obj)
+        db.session.add(db_obj)
+        db.session.commit()
+        db.session.refresh(db_obj)
         return db_obj
 
-    def update(self, *, db_obj: ModelType, obj_in: UpdateSchemaType) -> ModelType:
+    def update(
+        self, *, db_obj: ModelType, obj_in: Union[UpdateSchemaType, Dict[str, Any]]
+    ) -> ModelType:
         obj_data = jsonable_encoder(db_obj)
-        update_data = obj_in.dict(exclude_unset=True)
-
-        # # Handle int based foreign key types:
-        # for k, v in update_data.items():
-        #     if isinstance(v, int):
-        #         update_data[k] = v
-
-        # Update DB record
+        if isinstance(obj_in, dict):
+            update_data = obj_in
+        else:
+            update_data = obj_in.dict(exclude_unset=True)
         for field in obj_data:
-            if field != "id" and field in update_data:
+            if field in update_data:
                 setattr(db_obj, field, update_data[field])
-        db.add(db_obj)
-        db.commit()
-        db.refresh(db_obj)
+        db.session.add(db_obj)
+        db.session.commit()
+        db.session.refresh(db_obj)
         return db_obj
 
-    def delete(self, db_session: Session, *, id: str) -> ModelType:
-        obj = db_session.query(self.model).get(id)
+    def delete(self, *, id: str) -> ModelType:
+        obj = db.session.query(self.model).get(id)
         if obj is None:
             raise NotFound
-        db_session.delete(obj)
-        db_session.commit()
+        db.session.delete(obj)
+        db.session.commit()
         return obj

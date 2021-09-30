@@ -4,9 +4,9 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic.networks import EmailStr
 
-from server.db import db
 from server.api import deps
 from server.crud import user_crud
+from server.db import db
 from server.db.models import UsersTable
 from server.schemas import User, UserCreate, UserUpdate
 from server.settings import app_settings
