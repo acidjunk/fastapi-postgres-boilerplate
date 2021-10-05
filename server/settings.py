@@ -13,10 +13,9 @@
 
 import secrets
 import string
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
 
-from pydantic import BaseSettings
-from pydantic import validator
+from pydantic import BaseSettings, validator
 from pydantic.networks import EmailStr, PostgresDsn
 
 

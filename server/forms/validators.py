@@ -12,17 +12,8 @@
 # limitations under the License.
 
 from types import new_class
-from typing import (
-    Any,
-    ClassVar,
-    Dict,
-    Generator,
-    List,
-    Optional,
-    Type,
-    TypeVar,
-    get_args,
-)
+from typing import (Any, ClassVar, Dict, Generator, List, Optional, Type,
+                    TypeVar, get_args)
 
 import structlog
 from pydantic import ConstrainedList

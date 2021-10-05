@@ -13,13 +13,9 @@
 
 
 from server.db.database import Database, transactional
-from server.db.models import (  # noqa: F401
-    ProductsTable,
-    ProductTypesTable,
-    MapsTable,
-    UtcTimestamp,
-    UtcTimestampException,
-)
+from server.db.models import ProductsTable  # noqa: F401
+from server.db.models import (MapsTable, ProductTypesTable, UtcTimestamp,
+                              UtcTimestampException)
 from server.settings import app_settings
 
 db = Database(app_settings.DATABASE_URI)

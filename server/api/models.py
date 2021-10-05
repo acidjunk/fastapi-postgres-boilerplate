@@ -23,11 +23,7 @@ from more_itertools import flatten
 from pydantic import BaseModel
 
 from server.api.error_handling import raise_status
-from server.db import (
-    ProductsTable,
-    ProductTypesTable,
-    db,
-)
+from server.db import ProductsTable, ProductTypesTable, db
 
 
 def validate(cls: Type, json_dict: Dict, is_new_instance: bool = True) -> Dict:

@@ -5,10 +5,11 @@ Revises:
 Create Date: 2021-08-04 14:00:00.650463
 
 """
-import sqlalchemy_utils
 import sqlalchemy as sa
+import sqlalchemy_utils
 from alembic import op
 from sqlalchemy.dialects import postgresql
+
 from server import db
 
 # revision identifiers, used by Alembic.

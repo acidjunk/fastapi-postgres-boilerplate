@@ -12,52 +12,63 @@
 # limitations under the License.
 
 from http import HTTPStatus
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 
-from fastapi.param_functions import Body
+from fastapi import HTTPException
+from fastapi.param_functions import Body, Depends
 from fastapi.routing import APIRouter
+from starlette.responses import Response
 
+from server.api.deps import common_parameters
 from server.api.error_handling import raise_status
-from server.api.models import delete, save, update
-from server.db import ProductsTable
-from server.schemas.product import Product, ProductCreate, ProductUpdate
-import structlog
-
-logger = structlog.get_logger(__name__)
+from server.crud import product_crud
+from server.db.models import ProductsTable
+from server.schemas import Product, ProductCreate, ProductUpdate
 
 router = APIRouter()
 
 
 @router.get("/", response_model=List[Product])
-def fetch(product_type: Optional[str] = None) -> List[Product]:
-    query = ProductsTable.query
-
-    if product_type:
-        query = query.filter(ProductsTable.__dict__["product_type"] == product_type)
-
-    return query.all()
+def get_multi(
+    response: Response, common: dict = Depends(common_parameters)
+) -> List[Product]:
+    products, header_range = product_crud.get_multi(
+        skip=common["skip"],
+        limit=common["limit"],
+        filter_parameters=common["filter"],
+        sort_parameters=common["sort"],
+    )
+    response.headers["Content-Range"] = header_range
+    return products
 
 
 @router.get("/{id}", response_model=Product)
-def product_by_id(id: UUID) -> ProductsTable:
-    product = ProductsTable.query.filter_by(id=id).first()
+def get_by_id(id: UUID) -> ProductsTable:
+    product = product_crud.get(id)
     if not product:
         raise_status(HTTPStatus.NOT_FOUND, f"Product id {id} not found")
     return product
 
 
 @router.post("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def save_product(data: ProductCreate = Body(...)) -> None:
-    logger.info("Saving map", data=data)
-    return save(ProductsTable, data)
+def create(data: ProductCreate = Body(...)) -> None:
+    return product_crud.create(obj_in=data)
 
 
-@router.put("/", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def update_product(data: ProductUpdate = Body(...)) -> None:
-    return update(ProductsTable, data)
+@router.put("/{product_id}", response_model=None, status_code=HTTPStatus.NO_CONTENT)
+def update(*, product_id: UUID, item_in: ProductUpdate) -> None:
+    product = product_crud.get(id=product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    product = product_crud.update(
+        db_obj=product,
+        obj_in=item_in,
+    )
+    return product
 
 
 @router.delete("/{product_id}", response_model=None, status_code=HTTPStatus.NO_CONTENT)
-def delete_product(product_id: UUID) -> None:
-    return delete(ProductsTable, product_id)
+def delete(product_id: UUID) -> None:
+    return product_crud.delete(id=product_id)
