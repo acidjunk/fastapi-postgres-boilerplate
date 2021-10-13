@@ -32,7 +32,11 @@ from starlette.responses import Response
 from starlette.types import ASGIApp
 from structlog.stdlib import BoundLogger
 
+# from server.db.models import UsersTable
+from server.schemas.user import UserInDB
 from server.utils.json import json_dumps, json_loads
+from fastapi_users.db import SQLAlchemyUserDatabase
+
 
 logger = structlog.get_logger(__name__)
 
@@ -283,4 +287,3 @@ def transactional(db: Database, log: BoundLogger) -> Iterator:
         # Extra safe guard rollback. If the commit failed there is still a failed transaction open.
         # BTW: without a transaction in progress this method is a pass-through.
         db.session.rollback()
-

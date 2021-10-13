@@ -26,10 +26,10 @@ from sqlalchemy.engine import Dialect
 from sqlalchemy.exc import DontWrapMixin
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
-from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 
 from server.db.database import BaseModel
+from server.schemas.user import UserInDB
 from server.utils.date_utils import nowtz
 
 logger = structlog.get_logger(__name__)
@@ -110,7 +110,6 @@ class UsersTable(BaseModel, SQLAlchemyBaseUserTable):
         onupdate=nowtz,
         nullable=False,
     )
-
     roles = relationship("RolesTable", secondary="roles_users", lazy="joined")
 
 

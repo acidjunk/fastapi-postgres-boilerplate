@@ -1,150 +1,54 @@
-from typing import Any, List
+from typing import Optional
 
-from fastapi import APIRouter, Body, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
-from pydantic.networks import EmailStr
+from fastapi import Depends, Request
+from fastapi_users import BaseUserManager, FastAPIUsers
+from fastapi_users.authentication import JWTAuthentication
+from fastapi_users.db import SQLAlchemyUserDatabase
 
-from server.api import deps
-from server.crud import user_crud
-from server.db import db
-from server.db.models import UsersTable
-from server.schemas import User, UserCreate, UserUpdate
-from server.settings import app_settings
-from server.utils.auth import send_new_account_email
+from server.crud.base import get_user_db
+from server.schemas.user import UserBase, UserCreate, UserInDB, UserUpdate
 
+from fastapi.routing import APIRouter
+
+SECRET = "SECRET"
 router = APIRouter()
 
 
-@router.get("/", response_model=List[User])
-def read_users(
-    skip: int = 0,
-    limit: int = 100,
-    current_user: UsersTable = Depends(deps.get_current_active_superuser),
-) -> Any:
-    """
-    Retrieve users.
-    """
-    users = user_crud.get_multi(db, skip=skip, limit=limit)
-    return users
+class UserManager(BaseUserManager[UserCreate, UserInDB]):
+    user_db_model = UserInDB
+    reset_password_token_secret = SECRET
+    verification_token_secret = SECRET
+
+    async def on_after_register(self, user: UserInDB, request: Optional[Request] = None):
+        print(f"User {user.id} has registered.")
+
+    async def on_after_forgot_password(self, user: UserInDB, token: str, request: Optional[Request] = None):
+        print(f"User {user.id} has forgot their password. Reset token: {token}")
+
+    async def after_verification_request(self, user: UserInDB, token: str, request: Optional[Request] = None):
+        print(f"Verification requested for user {user.id}. Verification token: {token}")
 
 
-@router.post("/", response_model=User)
-def create_user(
-    *,
-    user_in: UserCreate,
-    current_user: UsersTable = Depends(deps.get_current_active_superuser),
-) -> Any:
-    """
-    Create new user.
-    """
-    user = user_crud.user.get_by_email(email=user_in.email)
-    if user:
-        raise HTTPException(
-            status_code=400,
-            detail="The user with this username already exists in the system.",
-        )
-    user = user_crud.create(obj_in=user_in)
-    if app_settings.EMAILS_ENABLED and user_in.email:
-        send_new_account_email(
-            email_to=user_in.email, username=user_in.email, password=user_in.password
-        )
-    return user
+def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
+    yield UserManager(user_db)
 
 
-@router.put("/me", response_model=User)
-def update_user_me(
-    *,
-    password: str = Body(None),
-    full_name: str = Body(None),
-    email: EmailStr = Body(None),
-    current_user: UsersTable = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Update own user.
-    """
-    current_user_data = jsonable_encoder(current_user)
-    user_in = UserUpdate(**current_user_data)
-    if password is not None:
-        user_in.password = password
-    if full_name is not None:
-        user_in.full_name = full_name
-    if email is not None:
-        user_in.email = email
-    user = user_crud.update(db_obj=current_user, obj_in=user_in)
-    return user
+jwt_authentication = JWTAuthentication(
+    secret=SECRET, lifetime_seconds=3600, tokenUrl="auth/jwt/login"
+)
+
+fastapi_users = FastAPIUsers(
+    get_user_manager,
+    [jwt_authentication],
+    UserBase,
+    UserCreate,
+    UserUpdate,
+    UserInDB,
+)
+
+current_active_user = fastapi_users.current_user(active=True)
 
 
-# @router.get("/me", response_model=UsersTable)
-@router.get("/me", response_model=User)
-def read_user_me(
-    current_user: UsersTable = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Get current user.
-    """
-    return current_user
-
-
-# @router.post("/open", response_model=schemas.User)
-# def create_user_open(
-#     *,
-#     db: Session = Depends(deps.get_db),
-#     password: str = Body(...),
-#     email: EmailStr = Body(...),
-#     full_name: str = Body(None),
-# ) -> Any:
-#     """
-#     Create new user without the need to be logged in.
-#     """
-#     if not settings.USERS_OPEN_REGISTRATION:
-#         raise HTTPException(
-#             status_code=403,
-#             detail="Open user registration is forbidden on this server",
-#         )
-#     user = crud.user.get_by_email(db, email=email)
-#     if user:
-#         raise HTTPException(
-#             status_code=400,
-#             detail="The user with this username already exists in the system",
-#         )
-#     user_in = schemas.UserCreate(password=password, email=email, full_name=full_name)
-#     user = crud.user.create(db, obj_in=user_in)
-#     return user
-
-
-@router.get("/{user_id}", response_model=User)
-def read_user_by_id(
-    user_id: int,
-    current_user: UsersTable = Depends(deps.get_current_active_user),
-) -> Any:
-    """
-    Get a specific user by id.
-    """
-    user = user_crud.get(id=user_id)
-    if user == current_user:
-        return user
-    if not user_crud.is_superuser(current_user):
-        raise HTTPException(
-            status_code=400, detail="The user doesn't have enough privileges"
-        )
-    return user
-
-
-@router.put("/{user_id}", response_model=User)
-def update_user(
-    *,
-    user_id: int,
-    user_in: UserUpdate,
-    current_user: UsersTable = Depends(deps.get_current_active_superuser),
-) -> Any:
-    """
-    Update a user.
-    """
-    user = user_crud.get(id=user_id)
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="The user with this username does not exist in the system",
-        )
-    user = user_crud.update(db_obj=user, obj_in=user_in)
-    return user
+@router.get("/authenticated-route")
+async def authenticated_route(user: UserInDB = Depends(current_active_user)):
+  return {"message": f"Hello {user.email}!"}

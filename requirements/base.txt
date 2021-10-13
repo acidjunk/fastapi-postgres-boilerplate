@@ -20,7 +20,7 @@ python-rapidjson==1.0
 pytz>=2019.1
 SQLAlchemy~=1.4.25
 fastapi-users[sqlalchemy]~=8.1.1
-SQLAlchemy-Searchable~=1.2.0
+SQLAlchemy          -Searchable~=1.2.0
 structlog~=20.2.0
 typer-cli~=0.0.11
 uvicorn[standard]~=0.13.4

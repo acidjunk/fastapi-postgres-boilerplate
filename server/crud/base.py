@@ -11,6 +11,10 @@ from sqlalchemy.sql import expression
 from server.api.models import transform_json
 from server.db import db
 from server.db.database import BaseModel
+from server.db.models import UsersTable
+from fastapi_users.db import SQLAlchemyUserDatabase
+
+from server.schemas.user import UserInDB
 
 logger = logging.getLogger("crud.base")
 
@@ -21,6 +25,11 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 class NotFound(Exception):
     pass
+
+
+def get_user_db():
+    users = UsersTable.__table__
+    yield SQLAlchemyUserDatabase(UserInDB, db, users)
 
 
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
@@ -151,3 +160,4 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.session.delete(obj)
         db.session.commit()
         return obj
+

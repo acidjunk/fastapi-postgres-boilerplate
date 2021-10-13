@@ -19,6 +19,12 @@ from fastapi.routing import APIRouter
 from server.api.api_v1.endpoints import (health, login, maps, product_types,
                                          products, settings, users)
 
+from fastapi import Depends, FastAPI
+
+from server.db import database
+from server.schemas.user import UserInDB
+from server.api.api_v1.endpoints.users import current_active_user, fastapi_users, jwt_authentication
+
 # Todo: add security depends here or in endpoints
 
 api_router = APIRouter()
@@ -35,3 +41,21 @@ api_router.include_router(settings.router, prefix="/settings", tags=["system"])
 api_router.include_router(health.router, prefix="/health", tags=["system"])
 
 api_router.include_router(users.router, prefix="/users", tags=["users"])
+
+api_router.include_router(
+    fastapi_users.get_auth_router(jwt_authentication), prefix="/auth/jwt", tags=["auth"]
+)
+api_router.include_router(
+    fastapi_users.get_register_router(), prefix="/auth", tags=["auth"]
+)
+api_router.include_router(
+    fastapi_users.get_reset_password_router(),
+    prefix="/auth",
+    tags=["auth"],
+)
+api_router.include_router(
+    fastapi_users.get_verify_router(),
+    prefix="/auth",
+    tags=["auth"],
+)
+api_router.include_router(fastapi_users.get_users_router(), prefix="/users", tags=["users"])
