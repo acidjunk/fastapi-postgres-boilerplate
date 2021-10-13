@@ -37,6 +37,7 @@ class AppSettings(BaseSettings):
     PROJECT_NAME: str = "Boilerplate webservice"
     TESTING: bool = True
     EMAILS_ENABLED: bool = False
+    SECRET = "SECRET"
     SESSION_SECRET: str = "".join(
         secrets.choice(string.ascii_letters) for i in range(16)
     )  # noqa: S311

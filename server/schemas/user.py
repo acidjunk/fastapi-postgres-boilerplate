@@ -1,13 +1,13 @@
 from datetime import datetime
 from typing import Optional
 from uuid import UUID
-from fastapi_users import models
+from fastapi_users.models import BaseUser, BaseUserCreate, BaseUserUpdate, BaseUserDB
 
 from pydantic import BaseModel, EmailStr
 
 
 # Shared properties
-class UserBase(models.BaseUser):
+class UserBase(BaseUser):
     email: Optional[EmailStr] = None
     is_active: Optional[bool] = True
     is_superuser: bool = False
@@ -15,17 +15,17 @@ class UserBase(models.BaseUser):
 
 
 # Properties to receive via API on creation
-class UserCreate(models.BaseUserCreate):
+class UserCreate(BaseUserCreate):
     email: EmailStr
     password: str
 
 
 # Properties to receive via API on update
-class UserUpdate(models.BaseUserUpdate):
+class UserUpdate(BaseUserUpdate):
     password: Optional[str] = None
 
 
-class UserInDBBase(models.BaseUserDB):
+class UserInDBBase(BaseUserDB):
     id: UUID
     created_at: datetime
     updated_at: datetime

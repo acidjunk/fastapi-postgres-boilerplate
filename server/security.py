@@ -6,6 +6,7 @@ from passlib.context import CryptContext
 from structlog import get_logger
 
 from server.settings import app_settings
+from fastapi_users.authentication import CookieAuthentication
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -34,3 +35,5 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
+
+cookie_authentication = CookieAuthentication(secret=app_settings.SECRET, lifetime_seconds=3600)
