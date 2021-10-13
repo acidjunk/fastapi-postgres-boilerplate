@@ -20,8 +20,7 @@ from uuid import uuid4
 import structlog
 from sqlalchemy import create_engine
 from sqlalchemy import inspect as sa_inspect
-from sqlalchemy.ext.declarative import as_declarative
-from sqlalchemy.ext.declarative.api import DeclarativeMeta
+from sqlalchemy.ext.declarative import as_declarative, DeclarativeMeta
 from sqlalchemy.orm import Query, Session, scoped_session, sessionmaker
 from sqlalchemy.orm.state import InstanceState
 from sqlalchemy.sql.schema import MetaData
@@ -284,3 +283,4 @@ def transactional(db: Database, log: BoundLogger) -> Iterator:
         # Extra safe guard rollback. If the commit failed there is still a failed transaction open.
         # BTW: without a transaction in progress this method is a pass-through.
         db.session.rollback()
+

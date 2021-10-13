@@ -101,7 +101,8 @@ def database(db_uri):
     """
     url = make_url(db_uri)
     db_to_create = url.database
-    url.database = "postgres"
+    # url.database = "postgres"
+    url = url.set(database="postgres")
     engine = create_engine(url)
     with closing(engine.connect()) as conn:
         conn.execute("COMMIT;")

@@ -16,6 +16,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Optional
 
+import databases
 import pytz
 import sqlalchemy
 import structlog
@@ -26,6 +27,8 @@ from sqlalchemy.engine import Dialect
 from sqlalchemy.exc import DontWrapMixin
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
+from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
+from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 
 from server.db.database import BaseModel
 from server.utils.date_utils import nowtz
@@ -90,7 +93,7 @@ class RolesTable(BaseModel):
     )
 
 
-class UsersTable(BaseModel):
+class UsersTable(BaseModel, SQLAlchemyBaseUserTable):
     __tablename__ = "users"
 
     id = Column(UUIDType, server_default=text("uuid_generate_v4()"), primary_key=True)
