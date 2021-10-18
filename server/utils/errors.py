@@ -173,9 +173,7 @@ def post_mortem(debugger: str, error: ErrorState) -> ErrorState:
             try:
                 import web_pdb
             except ImportError:
-                logger.critical(
-                    "web_pd could not be imported for post mortem debugging"
-                )
+                logger.critical("web_pd could not be imported for post mortem debugging")
                 return error
             web_pdb.post_mortem(error.__traceback__)
         elif debugger == "print":

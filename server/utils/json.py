@@ -126,9 +126,7 @@ def to_serializable(o: Any) -> Any:
         return o.to_dict()
     if isinstance(o, BaseModel):
         return o.dict()
-    raise TypeError(
-        f"Could not serialize object of type {o.__class__.__name__} to JSON"
-    )
+    raise TypeError(f"Could not serialize object of type {o.__class__.__name__} to JSON")
 
 
 ISO_FORMAT_STR_LEN = len("2019-05-18T15:17:00+00:00")  # assume 'seconds' precision
@@ -150,9 +148,7 @@ def from_serializable(dct: Dict[str, Any]) -> Dict[str, Any]:
         if isinstance(v, str) and len(v) == ISO_FORMAT_STR_LEN and v[10] == "T":
             with suppress(ValueError, TypeError):
                 timestamp = datetime.fromisoformat(v)
-                assert (
-                    timestamp.tzinfo is not None
-                ), "All timestamps should contain timezone information."
+                assert timestamp.tzinfo is not None, "All timestamps should contain timezone information."
                 dct[k] = timestamp
     return dct
 

@@ -27,8 +27,7 @@ from server.api.api_v1.api import api_router
 from server.api.error_handling import ProblemDetailException
 from server.db import db
 from server.db.database import DBSessionMiddleware
-from server.exception_handlers.generic_exception_handlers import (
-    form_error_handler, problem_detail_handler)
+from server.exception_handlers.generic_exception_handlers import form_error_handler, problem_detail_handler
 from server.forms import FormException
 from server.settings import app_settings
 from server.version import GIT_COMMIT_HASH
@@ -87,9 +86,7 @@ app.add_exception_handler(FormException, form_error_handler)
 app.add_exception_handler(ProblemDetailException, problem_detail_handler)
 
 
-@app.router.get(
-    "/", response_model=str, response_class=JSONResponse, include_in_schema=False
-)
+@app.router.get("/", response_model=str, response_class=JSONResponse, include_in_schema=False)
 def index() -> str:
     return "FastAPI boilerplate backend root"
 

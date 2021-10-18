@@ -44,6 +44,4 @@ def raise_status(
     status = HTTPStatus(status)
     if isinstance(headers, MutableHeaders):
         headers = dict(**headers)
-    raise ProblemDetailException(
-        status=status.value, title=status.phrase, detail=detail, headers=headers
-    )
+    raise ProblemDetailException(status=status.value, title=status.phrase, detail=detail, headers=headers)

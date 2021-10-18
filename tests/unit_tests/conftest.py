@@ -21,10 +21,8 @@ from starlette.testclient import TestClient
 from server.api.api_v1.api import api_router
 from server.api.error_handling import ProblemDetailException
 from server.db import ProductsTable, db
-from server.db.database import (ENGINE_ARGUMENTS, SESSION_ARGUMENTS, BaseModel,
-                                DBSessionMiddleware, SearchQuery)
-from server.exception_handlers.generic_exception_handlers import (
-    form_error_handler, problem_detail_handler)
+from server.db.database import ENGINE_ARGUMENTS, SESSION_ARGUMENTS, BaseModel, DBSessionMiddleware, SearchQuery
+from server.exception_handlers.generic_exception_handlers import form_error_handler, problem_detail_handler
 from server.forms import FormException
 from server.settings import app_settings
 from server.types import UUIDstr
@@ -54,9 +52,7 @@ def run_migrations(db_uri: str) -> None:
     os.environ["DATABASE_URI"] = db_uri
     app_settings.DATABASE_URI = db_uri
     alembic_cfg = Config(file_=os.path.join(path, "../../alembic.ini"))
-    alembic_cfg.set_main_option(
-        "script_location", os.path.join(path, "../../migrations")
-    )
+    alembic_cfg.set_main_option("script_location", os.path.join(path, "../../migrations"))
     alembic_cfg.set_main_option(
         "version_locations",
         f"{os.path.join(path, '../../migrations/versions/schema')} {os.path.join(path, '../../migrations/versions/general')}",
@@ -191,9 +187,7 @@ def mocked_api():
 
 @pytest.fixture()
 def product_1():
-    product = ProductsTable(
-        name="Product 1", description="Product 1 description", created_at=nowtz()
-    )
+    product = ProductsTable(name="Product 1", description="Product 1 description", created_at=nowtz())
     db.session.add(product)
     db.session.commit()
     return str(product.id)
@@ -201,9 +195,7 @@ def product_1():
 
 @pytest.fixture()
 def product_2():
-    product = ProductsTable(
-        name="Product 2", description="Product 2 description", created_at=nowtz()
-    )
+    product = ProductsTable(name="Product 2", description="Product 2 description", created_at=nowtz())
     db.session.add(product)
     db.session.commit()
     return str(product.id)

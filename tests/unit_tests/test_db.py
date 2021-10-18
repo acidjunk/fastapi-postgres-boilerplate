@@ -70,9 +70,7 @@ def test_transactional_no_commit():
             insert_p({})
 
     assert (
-        db.session.query(ProductsTable)
-        .filter(ProductsTable.name == "Test transactional should not be committed")
-        .all()
+        db.session.query(ProductsTable).filter(ProductsTable.name == "Test transactional should not be committed").all()
         == []
     )
     logger.assert_has_calls(
@@ -115,15 +113,9 @@ def test_transactional_no_commit_second_thread():
         with transactional(db, logger):
             insert_p({})
 
+    assert db.session.query(ProductsTable).filter(ProductsTable.name == "Test transactional should be committed").one()
     assert (
-        db.session.query(ProductsTable)
-        .filter(ProductsTable.name == "Test transactional should be committed")
-        .one()
-    )
-    assert (
-        db.session.query(ProductsTable)
-        .filter(ProductsTable.name == "Test transactional should not be committed")
-        .all()
+        db.session.query(ProductsTable).filter(ProductsTable.name == "Test transactional should not be committed").all()
         == []
     )
     logger.assert_has_calls(
@@ -175,7 +167,4 @@ def test_autouse_fixture_rolls_back_bbb():
 
 
 def test_str_method():
-    assert (
-        str(ProductsTable())
-        == "ProductsTable(id=None, name=None, description=None, created_at=None)"
-    )
+    assert str(ProductsTable()) == "ProductsTable(id=None, name=None, description=None, created_at=None)"

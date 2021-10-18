@@ -74,9 +74,7 @@ def _query_with_filters(
                         logger.debug("Running full-text search query.", value=value)
                         query = query.search(value)
                     elif field in model.__dict__:
-                        query = query.filter(
-                            cast(model.__dict__[field], String).ilike("%" + value + "%")
-                        )
+                        query = query.filter(cast(model.__dict__[field], String).ilike("%" + value + "%"))
 
     if sort is not None and len(sort) >= 2:
         for sort in chunked(sort, 2):

@@ -34,9 +34,7 @@ async def common_parameters(
 
 def get_current_user(token: str = Depends(reusable_oauth)) -> UsersTable:
     try:
-        payload = jwt.decode(
-            token, app_settings.SESSION_SECRET, algorithms=[app_settings.JWT_ALGORITHM]
-        )
+        payload = jwt.decode(token, app_settings.SESSION_SECRET, algorithms=[app_settings.JWT_ALGORITHM])
         user_id: str = payload.get("sub")
     except (jwt.JWTError, ValidationError):
         raise HTTPException(
@@ -61,7 +59,5 @@ def get_current_active_superuser(
     current_user: UsersTable = Depends(get_current_user),
 ) -> UsersTable:
     if not user_crud.is_superuser(current_user):
-        raise HTTPException(
-            status_code=400, detail="The user doesn't have enough privileges"
-        )
+        raise HTTPException(status_code=400, detail="The user doesn't have enough privileges")
     return current_user

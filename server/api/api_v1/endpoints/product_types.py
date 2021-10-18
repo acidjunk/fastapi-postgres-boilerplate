@@ -30,9 +30,7 @@ router = APIRouter()
 
 
 @router.get("/", response_model=List[ProductType])
-def get_multi(
-    response: Response, common: dict = Depends(common_parameters)
-) -> List[ProductType]:
+def get_multi(response: Response, common: dict = Depends(common_parameters)) -> List[ProductType]:
     product_types, header_range = product_type_crud.get_multi(
         skip=common["skip"],
         limit=common["limit"],
@@ -56,9 +54,7 @@ def create(data: ProductTypeCreate = Body(...)) -> None:
     return product_type_crud.create(obj_in=data)
 
 
-@router.put(
-    "/{product_type_id}", response_model=None, status_code=HTTPStatus.NO_CONTENT
-)
+@router.put("/{product_type_id}", response_model=None, status_code=HTTPStatus.NO_CONTENT)
 def update(*, product_type_id: UUID, item_in: ProductTypeUpdate) -> None:
     product_type = product_type_crud.get(id=product_type_id)
     if not product_type:
@@ -71,9 +67,7 @@ def update(*, product_type_id: UUID, item_in: ProductTypeUpdate) -> None:
     return product_type
 
 
-@router.delete(
-    "/{product_type_id}", response_model=None, status_code=HTTPStatus.NO_CONTENT
-)
+@router.delete("/{product_type_id}", response_model=None, status_code=HTTPStatus.NO_CONTENT)
 def delete(product_type_id: UUID) -> None:
     # Todo: check product first
     return product_type_crud.delete(id=product_type_id)

@@ -24,9 +24,7 @@ router = APIRouter()
 
 @router.delete("/cache/{name}", status_code=HTTPStatus.NO_CONTENT)
 async def clear_cache(name: str, background_tasks: BackgroundTasks) -> None:
-    cache = Cache(
-        Cache.REDIS, endpoint=app_settings.CACHE_HOST, port=app_settings.CACHE_PORT
-    )
+    cache = Cache(Cache.REDIS, endpoint=app_settings.CACHE_HOST, port=app_settings.CACHE_PORT)
     if name == "all":
         background_tasks.add_task(cache.delete, "/*")
     else:

@@ -1,6 +1,5 @@
 import logging
-from typing import (Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar,
-                    Union)
+from typing import Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar, Union
 
 from fastapi.encoders import jsonable_encoder
 from more_itertools import one
@@ -60,23 +59,13 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                 # treat the key as the value
                 if len(value) > 0:
                     if key in sa_inspect(self.model).columns.keys():
-                        conditions.append(
-                            cast(self.model.__dict__[key], String).ilike(
-                                "%" + one(value) + "%"
-                            )
-                        )
+                        conditions.append(cast(self.model.__dict__[key], String).ilike("%" + one(value) + "%"))
                     else:
-                        logger.info(
-                            f"Key: not found in database model key={key}, model={self.model}"
-                        )
+                        logger.info(f"Key: not found in database model key={key}, model={self.model}")
                     query = query.filter(or_(*conditions))
                 else:
                     for column in sa_inspect(self.model).columns.keys():
-                        conditions.append(
-                            cast(self.model.__dict__[column], String).ilike(
-                                "%" + key + "%"
-                            )
-                        )
+                        conditions.append(cast(self.model.__dict__[column], String).ilike("%" + key + "%"))
                     query = query.filter(or_(*conditions))
 
         if sort_parameters and len(sort_parameters):
@@ -85,39 +74,27 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                     sort_col, sort_order = sort_parameter.split(":")
                     if sort_col in sa_inspect(self.model).columns.keys():
                         if sort_order.upper() == "DESC":
-                            query = query.order_by(
-                                expression.desc(self.model.__dict__[sort_col])
-                            )
+                            query = query.order_by(expression.desc(self.model.__dict__[sort_col]))
                         else:
-                            query = query.order_by(
-                                expression.asc(self.model.__dict__[sort_col])
-                            )
+                            query = query.order_by(expression.asc(self.model.__dict__[sort_col]))
                     else:
                         logger.debug(f"Sort col does not exist sort_col={sort_col}")
                 except ValueError:
                     if sort_parameter in sa_inspect(self.model).columns.keys():
-                        query = query.order_by(
-                            expression.asc(self.model.__dict__[sort_parameter])
-                        )
+                        query = query.order_by(expression.asc(self.model.__dict__[sort_parameter]))
                     else:
-                        logger.debug(
-                            f"Sort param does not exist sort_parameter={sort_parameter}"
-                        )
+                        logger.debug(f"Sort param does not exist sort_parameter={sort_parameter}")
 
         # Generate Content Range Header Values
         count = query.count()
 
         if limit:
             # Limit is not 0: use limit
-            response_range = "{} {}-{}/{}".format(
-                self.model.__table__.name.lower(), skip, skip + limit, count
-            )
+            response_range = "{} {}-{}/{}".format(self.model.__table__.name.lower(), skip, skip + limit, count)
             return query.offset(skip).limit(limit).all(), response_range
         else:
             # Limit is 0: unlimited
-            response_range = "{} {}/{}".format(
-                self.model.__table__.name.lower(), skip, count
-            )
+            response_range = "{} {}/{}".format(self.model.__table__.name.lower(), skip, count)
             return query.offset(skip).all(), response_range
 
     def create(self, *, obj_in: CreateSchemaType) -> ModelType:
@@ -128,9 +105,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.session.refresh(db_obj)
         return db_obj
 
-    def update(
-        self, *, db_obj: ModelType, obj_in: Union[UpdateSchemaType, Dict[str, Any]]
-    ) -> ModelType:
+    def update(self, *, db_obj: ModelType, obj_in: Union[UpdateSchemaType, Dict[str, Any]]) -> ModelType:
         obj_data = jsonable_encoder(db_obj)
         if isinstance(obj_in, dict):
             update_data = obj_in

@@ -13,8 +13,7 @@
 
 from contextlib import contextmanager
 from contextvars import ContextVar
-from typing import (Any, Callable, ClassVar, Dict, Generator, Iterator, List,
-                    Optional, Set, cast)
+from typing import Any, Callable, ClassVar, Dict, Generator, Iterator, List, Optional, Set, cast
 from uuid import uuid4
 
 import structlog
@@ -26,8 +25,7 @@ from sqlalchemy.orm import Query, Session, scoped_session, sessionmaker
 from sqlalchemy.orm.state import InstanceState
 from sqlalchemy.sql.schema import MetaData
 from sqlalchemy_searchable import SearchQueryMixin
-from starlette.middleware.base import (BaseHTTPMiddleware,
-                                       RequestResponseEndpoint)
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.types import ASGIApp
@@ -59,9 +57,7 @@ class BaseModelMeta(DeclarativeMeta):
         if self._query is not None:
             return self._query
         else:
-            raise NoSessionError(
-                "Cant get session. Please, call BaseModel.set_query() first"
-            )
+            raise NoSessionError("Cant get session. Please, call BaseModel.set_query() first")
 
 
 @as_declarative(metaclass=BaseModelMeta)
@@ -198,9 +194,7 @@ class Database:
     """
 
     def __init__(self, db_url: str) -> None:
-        self.request_context: ContextVar[str] = ContextVar(
-            "request_context", default=""
-        )
+        self.request_context: ContextVar[str] = ContextVar("request_context", default="")
         self.engine = create_engine(db_url, **ENGINE_ARGUMENTS)
         self.session_factory = sessionmaker(bind=self.engine, **SESSION_ARGUMENTS)
 
@@ -238,9 +232,7 @@ class DBSessionMiddleware(BaseHTTPMiddleware):
         self.commit_on_exit = commit_on_exit
         self.database = database
 
-    async def dispatch(
-        self, request: Request, call_next: RequestResponseEndpoint
-    ) -> Response:
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         with self.database.database_scope():
             response = await call_next(request)
         return response

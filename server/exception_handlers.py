@@ -17,16 +17,13 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from server.api.error_handling import ProblemDetailException
-from server.forms import (FormException, FormNotCompleteError,
-                          FormValidationError)
+from server.forms import FormException, FormNotCompleteError, FormValidationError
 from server.utils.json import json_dumps, json_loads
 
 PROBLEM_DETAIL_FIELDS = ("title", "type")
 
 
-async def problem_detail_handler(
-    request: Request, exc: ProblemDetailException
-) -> JSONResponse:
+async def problem_detail_handler(request: Request, exc: ProblemDetailException) -> JSONResponse:
     headers = getattr(exc, "headers", None)
 
     body: dict = {"detail": exc.detail, "status": exc.status_code}

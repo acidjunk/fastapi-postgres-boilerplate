@@ -118,9 +118,7 @@ def post_process(
             try:
                 form_validated_data = generated_form(**user_input)
             except ValidationError as e:
-                raise FormValidationError(
-                    e.model.__name__, e.errors()
-                ) from e  # type:ignore
+                raise FormValidationError(e.model.__name__, e.errors()) from e  # type:ignore
 
             # Update state with validated_data
             current_state.update(form_validated_data.dict())
@@ -174,6 +172,4 @@ def ReadOnlyField(
     const: Optional[bool] = None,
     **extra: Any,
 ) -> Any:
-    return Field(
-        default, const=True, uniforms={"disabled": True, "value": default}, **extra
-    )
+    return Field(default, const=True, uniforms={"disabled": True, "value": default}, **extra)

@@ -30,9 +30,7 @@ router = APIRouter()
 
 
 @router.get("/", response_model=List[Map])
-def get_multi(
-    response: Response, common: dict = Depends(common_parameters)
-) -> List[Map]:
+def get_multi(response: Response, common: dict = Depends(common_parameters)) -> List[Map]:
     maps, header_range = map_crud.get_multi(
         skip=common["skip"],
         limit=common["limit"],

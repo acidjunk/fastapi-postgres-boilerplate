@@ -19,8 +19,7 @@ from typing import Optional
 import pytz
 import sqlalchemy
 import structlog
-from sqlalchemy import (Boolean, Column, ForeignKey, Integer, String, Text,
-                        TypeDecorator, text)
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text, TypeDecorator, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.engine import Dialect
 from sqlalchemy.exc import DontWrapMixin
@@ -50,19 +49,13 @@ class UtcTimestamp(TypeDecorator):
 
     impl = sqlalchemy.types.TIMESTAMP(timezone=True)
 
-    def process_bind_param(
-        self, value: Optional[datetime], dialect: Dialect
-    ) -> Optional[datetime]:
+    def process_bind_param(self, value: Optional[datetime], dialect: Dialect) -> Optional[datetime]:
         if value is not None:
             if value.tzinfo is None:
-                raise UtcTimestampException(
-                    f"Expected timestamp with tzinfo. Got naive timestamp {value!r} instead"
-                )
+                raise UtcTimestampException(f"Expected timestamp with tzinfo. Got naive timestamp {value!r} instead")
         return value
 
-    def process_result_value(
-        self, value: Optional[datetime], dialect: Dialect
-    ) -> Optional[datetime]:
+    def process_result_value(self, value: Optional[datetime], dialect: Dialect) -> Optional[datetime]:
         if value is not None:
             return value.astimezone(timezone.utc)
         return value
@@ -80,9 +73,7 @@ class RolesTable(BaseModel):
 
     id = Column(UUIDType, server_default=text("uuid_generate_v4()"), primary_key=True)
     name = Column(String(255), nullable=False, unique=True)
-    created_at = Column(
-        UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
-    )
+    created_at = Column(UtcTimestamp, nullable=False, server_default=text("current_timestamp()"))
     updated_at = Column(
         UtcTimestamp,
         default=datetime.now(tz=pytz.utc),
@@ -99,9 +90,7 @@ class UsersTable(BaseModel):
     hashed_password = Column(String(255), nullable=False)
     is_active = Column(Boolean, nullable=False, default=True)
     is_superuser = Column(Boolean, nullable=False, default=False)
-    created_at = Column(
-        UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
-    )
+    created_at = Column(UtcTimestamp, nullable=False, server_default=text("current_timestamp()"))
     updated_at = Column(
         UtcTimestamp,
         server_default=text("current_timestamp()"),
@@ -118,9 +107,7 @@ class ProductsTable(BaseModel):
     id = Column(UUIDType, server_default=text("uuid_generate_v4()"), primary_key=True)
     name = Column(String(), nullable=False, unique=True)
     description = Column(Text(), nullable=False)
-    created_at = Column(
-        UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
-    )
+    created_at = Column(UtcTimestamp, nullable=False, server_default=text("current_timestamp()"))
 
 
 class ProductTypesTable(BaseModel):
@@ -139,9 +126,7 @@ class MapsTable(BaseModel):
     size_x = Column(Integer, default=100)
     size_y = Column(Integer, default=100)
     status = Column(String(255), nullable=False, default="new")
-    created_at = Column(
-        UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
-    )
+    created_at = Column(UtcTimestamp, nullable=False, server_default=text("current_timestamp()"))
     updated_at = Column(
         UtcTimestamp,
         server_default=text("current_timestamp()"),
