@@ -21,10 +21,17 @@ from starlette.testclient import TestClient
 from server.api.api_v1.api import api_router
 from server.api.error_handling import ProblemDetailException
 from server.db import ProductsTable, db
-from server.db.database import (ENGINE_ARGUMENTS, SESSION_ARGUMENTS, BaseModel,
-                                DBSessionMiddleware, SearchQuery)
+from server.db.database import (
+    ENGINE_ARGUMENTS,
+    SESSION_ARGUMENTS,
+    BaseModel,
+    DBSessionMiddleware,
+    SearchQuery,
+)
 from server.exception_handlers.generic_exception_handlers import (
-    form_error_handler, problem_detail_handler)
+    form_error_handler,
+    problem_detail_handler,
+)
 from server.forms import FormException
 from server.settings import app_settings
 from server.types import UUIDstr

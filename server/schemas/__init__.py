@@ -14,8 +14,11 @@
 from server.schemas.map import Map, MapCreate, MapUpdate
 from server.schemas.msg import Msg
 from server.schemas.product import Product, ProductCreate, ProductUpdate
-from server.schemas.product_type import (ProductType, ProductTypeCreate,
-                                         ProductTypeUpdate)
+from server.schemas.product_type import (
+    ProductType,
+    ProductTypeCreate,
+    ProductTypeUpdate,
+)
 from server.schemas.token import Token, TokenPayload
 from server.schemas.user import User, UserCreate, UserUpdate
 

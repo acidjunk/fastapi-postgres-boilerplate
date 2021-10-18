@@ -12,7 +12,7 @@ from server.db.models import UsersTable
 from server.schemas import TokenPayload
 from server.settings import app_settings
 
-reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"/api/login/access-token")
+reusable_oauth = OAuth2PasswordBearer(tokenUrl=f"/api/login/access-token")
 
 
 async def common_parameters(
@@ -32,18 +32,18 @@ async def common_parameters(
     return {"skip": skip, "limit": limit, "filter": filter, "sort": sort}
 
 
-def get_current_user(token: str = Depends(reusable_oauth2)) -> UsersTable:
+def get_current_user(token: str = Depends(reusable_oauth)) -> UsersTable:
     try:
         payload = jwt.decode(
             token, app_settings.SESSION_SECRET, algorithms=[app_settings.JWT_ALGORITHM]
         )
-        token_data = TokenPayload(**payload)
+        user_id: str = payload.get("sub")
     except (jwt.JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-    user = user_crud.get(db, id=token_data.sub)
+    user = user_crud.get(id=user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

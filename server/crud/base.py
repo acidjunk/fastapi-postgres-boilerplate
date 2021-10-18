@@ -1,6 +1,5 @@
 import logging
-from typing import (Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar,
-                    Union)
+from typing import Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar, Union
 
 from fastapi.encoders import jsonable_encoder
 from more_itertools import one

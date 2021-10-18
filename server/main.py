@@ -17,6 +17,7 @@ import os
 
 import structlog
 from fastapi.applications import FastAPI
+from fastapi.security import OAuth2PasswordBearer
 from mangum import Mangum
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
@@ -27,7 +28,9 @@ from server.api.error_handling import ProblemDetailException
 from server.db import db
 from server.db.database import DBSessionMiddleware
 from server.exception_handlers.generic_exception_handlers import (
-    form_error_handler, problem_detail_handler)
+    form_error_handler,
+    problem_detail_handler,
+)
 from server.forms import FormException
 from server.settings import app_settings
 from server.version import GIT_COMMIT_HASH
@@ -49,6 +52,7 @@ structlog.configure(
 
 logger = structlog.get_logger(__name__)
 
+
 app = FastAPI(
     title="Boilerplate",
     description="The boilerplate is a project that can be copied and adapted.",
@@ -64,19 +68,7 @@ app = FastAPI(
             "description": "Test environment",
         }
         if os.getenv("ENVIRONMENT") == "production"
-        else {"url": "http://localhost:8080", "description": "Local environment"},
-        {
-            "url": "https://boilerplate.dev.banaan.org",
-            "description": "Development environment",
-        },
-        {
-            "url": "https://boilerplate.staging.banaan.org",
-            "description": "Staging environment",
-        },
-        {
-            "url": "https://boilerplate.banaan.org",
-            "description": "Production environment",
-        },
+        else {"url": "/", "description": "Local environment"},
     ],
 )
 

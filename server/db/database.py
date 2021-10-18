@@ -13,8 +13,18 @@
 
 from contextlib import contextmanager
 from contextvars import ContextVar
-from typing import (Any, Callable, ClassVar, Dict, Generator, Iterator, List,
-                    Optional, Set, cast)
+from typing import (
+    Any,
+    Callable,
+    ClassVar,
+    Dict,
+    Generator,
+    Iterator,
+    List,
+    Optional,
+    Set,
+    cast,
+)
 from uuid import uuid4
 
 import structlog
@@ -26,8 +36,7 @@ from sqlalchemy.orm import Query, Session, scoped_session, sessionmaker
 from sqlalchemy.orm.state import InstanceState
 from sqlalchemy.sql.schema import MetaData
 from sqlalchemy_searchable import SearchQueryMixin
-from starlette.middleware.base import (BaseHTTPMiddleware,
-                                       RequestResponseEndpoint)
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.types import ASGIApp

@@ -2,9 +2,11 @@ from typing import Any, List
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
+from starlette.responses import Response
 from pydantic.networks import EmailStr
 
 from server.api import deps
+from server.api.deps import common_parameters
 from server.crud import user_crud
 from server.db import db
 from server.db.models import UsersTable
@@ -15,16 +17,22 @@ from server.utils.auth import send_new_account_email
 router = APIRouter()
 
 
-@router.get("/", response_model=List[User])
+@router.get("/")
 def read_users(
-    skip: int = 0,
-    limit: int = 100,
+    response: Response,
+    common: dict = Depends(common_parameters),
     current_user: UsersTable = Depends(deps.get_current_active_superuser),
 ) -> Any:
     """
     Retrieve users.
     """
-    users = user_crud.get_multi(db, skip=skip, limit=limit)
+    users, header_range = user_crud.get_multi(
+        skip=common["skip"],
+        limit=common["limit"],
+        filter_parameters=common["filter"],
+        sort_parameters=common["sort"],
+    )
+    response.headers["Content-Range"] = header_range
     return users
 
 

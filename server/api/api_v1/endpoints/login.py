@@ -1,26 +1,31 @@
 from datetime import timedelta
 from typing import Any
 
+import structlog
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
 
 from server import schemas, security
 from server.api import deps
 from server.crud import user_crud
-from server.db import db, models
+from server.db import db
 from server.db.models import UsersTable
 from server.schemas import Token
 from server.security import get_password_hash
 from server.settings import app_settings
-from server.utils.auth import (generate_password_reset_token,
-                               send_reset_password_email,
-                               verify_password_reset_token)
+from server.utils.auth import (
+    generate_password_reset_token,
+    send_reset_password_email,
+    verify_password_reset_token,
+)
 
 router = APIRouter()
 
+logger = structlog.get_logger(__name__)
 
-@router.post("/login/access-token", response_model=Token)
+
+@router.post("/login/access-token")
+# @router.post("/login/access-token", response_model=Token)
 def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()) -> Any:
     """
     OAuth2 compatible token login, get an access token for future requests

@@ -19,8 +19,16 @@ from typing import Optional
 import pytz
 import sqlalchemy
 import structlog
-from sqlalchemy import (Boolean, Column, ForeignKey, Integer, String, Text,
-                        TypeDecorator, text)
+from sqlalchemy import (
+    Boolean,
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    TypeDecorator,
+    text,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.engine import Dialect
 from sqlalchemy.exc import DontWrapMixin

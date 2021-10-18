@@ -1,8 +1,6 @@
 from typing import Optional
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy.orm import Session
-
 from server.crud.base import CRUDBase
 from server.db import db
 from server.db.models import UsersTable
@@ -30,8 +28,6 @@ class CRUDUser(CRUDBase[UsersTable, UserCreate, UserUpdate]):
         )
         db.session.add(db_obj)
         db.session.commit()
-        # db.commit()
-        # db.refresh(db_obj)
         return db_obj
 
     def update(self, *, db_obj: UsersTable, obj_in: UserUpdate) -> UsersTable:
