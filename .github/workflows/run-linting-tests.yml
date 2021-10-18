@@ -23,7 +23,7 @@ jobs:
           pip install -r requirements/all.txt
       - name: Check formatting
         run: |
-#          isort -c .
+          isort -c .
           black --check .
 #      - name: Lint with flake8
 #        run: |

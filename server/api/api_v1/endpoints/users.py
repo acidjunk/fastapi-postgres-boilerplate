@@ -2,8 +2,8 @@ from typing import Any, List
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
-from starlette.responses import Response
 from pydantic.networks import EmailStr
+from starlette.responses import Response
 
 from server.api import deps
 from server.api.deps import common_parameters

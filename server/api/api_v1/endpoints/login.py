@@ -13,11 +13,9 @@ from server.db.models import UsersTable
 from server.schemas import Token
 from server.security import get_password_hash
 from server.settings import app_settings
-from server.utils.auth import (
-    generate_password_reset_token,
-    send_reset_password_email,
-    verify_password_reset_token,
-)
+from server.utils.auth import (generate_password_reset_token,
+                               send_reset_password_email,
+                               verify_password_reset_token)
 
 router = APIRouter()
 
