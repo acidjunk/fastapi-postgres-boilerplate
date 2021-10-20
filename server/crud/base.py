@@ -9,12 +9,12 @@ from sqlalchemy.inspection import inspect as sa_inspect
 from sqlalchemy.sql import expression
 
 from server.api.models import transform_json
-from server.db import db
+from server.db import db, dbdatabase
 from server.db.database import BaseModel
-from server.db.models import UsersTable
+from server.db.models import User
 from fastapi_users.db import SQLAlchemyUserDatabase
 
-from server.schemas.user import UserInDB
+from server.schemas.user import UserDB
 
 logger = logging.getLogger("crud.base")
 
@@ -28,8 +28,7 @@ class NotFound(Exception):
 
 
 def get_user_db():
-    users = UsersTable.__table__
-    yield SQLAlchemyUserDatabase(UserInDB, db, users)
+    yield SQLAlchemyUserDatabase(UserDB, dbdatabase, User.__table__)
 
 
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):

@@ -33,7 +33,7 @@ from starlette.types import ASGIApp
 from structlog.stdlib import BoundLogger
 
 # from server.db.models import UsersTable
-from server.schemas.user import UserInDB
+from server.schemas.user import UserDB
 from server.utils.json import json_dumps, json_loads
 from fastapi_users.db import SQLAlchemyUserDatabase
 

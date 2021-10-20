@@ -8,7 +8,7 @@ from pydantic import ValidationError
 
 from server.crud import user_crud
 from server.db import db
-from server.db.models import UsersTable
+from server.db.models import User
 from server.schemas import TokenPayload
 from server.settings import app_settings
 
@@ -32,7 +32,7 @@ async def common_parameters(
     return {"skip": skip, "limit": limit, "filter": filter, "sort": sort}
 
 
-def get_current_user(token: str = Depends(reusable_oauth2)) -> UsersTable:
+def get_current_user(token: str = Depends(reusable_oauth2)) -> User:
     try:
         payload = jwt.decode(
             token, app_settings.SESSION_SECRET, algorithms=[app_settings.JWT_ALGORITHM]
@@ -50,16 +50,16 @@ def get_current_user(token: str = Depends(reusable_oauth2)) -> UsersTable:
 
 
 def get_current_active_user(
-    current_user: UsersTable = Depends(get_current_user),
-) -> UsersTable:
+    current_user: User = Depends(get_current_user),
+) -> User:
     if not user_crud.is_active(current_user):
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 
 def get_current_active_superuser(
-    current_user: UsersTable = Depends(get_current_user),
-) -> UsersTable:
+    current_user: User = Depends(get_current_user),
+) -> User:
     if not user_crud.is_superuser(current_user):
         raise HTTPException(
             status_code=400, detail="The user doesn't have enough privileges"

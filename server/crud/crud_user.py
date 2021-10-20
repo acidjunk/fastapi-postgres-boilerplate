@@ -5,36 +5,32 @@ from sqlalchemy.orm import Session
 
 from server.crud.base import CRUDBase
 from server.db import db
-from server.db.models import UsersTable
+from server.db.models import User
 from server.schemas.user import UserCreate, UserUpdate
 from server.security import get_password_hash, verify_password
 
 
-class CRUDUser(CRUDBase[UsersTable, UserCreate, UserUpdate]):
-    def get_by_email(self, *, email: str) -> Optional[UsersTable]:
-        return UsersTable.query.filter(UsersTable.email == email).first()
+class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
-    def get_by_username(self, *, username: str) -> Optional[UsersTable]:
-        return UsersTable.query.filter(UsersTable.username == username).first()
+    def get_by_email(self, *, email: str) -> Optional[User]:
+        return User.query.filter(User.email == email).first()
 
-    def get(self, id: Optional[str] = None) -> Optional[UsersTable]:
-        user = UsersTable.query.get(id)
+    def get_by_username(self, *, username: str) -> Optional[User]:
+        return User.query.filter(User.username == username).first()
+
+    def get(self, id: Optional[str] = None) -> Optional[User]:
+        user = User.query.get(id)
         return user
 
-    def create(self, *, obj_in: UserCreate) -> UsersTable:
-        db_obj = UsersTable(
-            email=obj_in.email,
-            hashed_password=get_password_hash(obj_in.password),
-            username=obj_in.username,
-            is_superuser=obj_in.is_superuser,
-        )
+    def create(self, *, obj_in: UserCreate) -> User:
+        db_obj = User()
         db.session.add(db_obj)
         db.session.commit()
         # db.commit()
         # db.refresh(db_obj)
         return db_obj
 
-    def update(self, *, db_obj: UsersTable, obj_in: UserUpdate) -> UsersTable:
+    def update(self, *, db_obj: User, obj_in: UserUpdate) -> User:
         obj_data = jsonable_encoder(db_obj)
         update_data = obj_in.dict(exclude_unset=True)
 
@@ -50,7 +46,7 @@ class CRUDUser(CRUDBase[UsersTable, UserCreate, UserUpdate]):
         db.session.refresh(db_obj)
         return db_obj
 
-    def authenticate(self, *, username: str, password: str) -> Optional[UsersTable]:
+    def authenticate(self, *, username: str, password: str) -> Optional[User]:
         user = self.get_by_username(username=username)
         if not user:
             return None
@@ -58,11 +54,11 @@ class CRUDUser(CRUDBase[UsersTable, UserCreate, UserUpdate]):
             return None
         return user
 
-    def is_active(self, user: UsersTable) -> bool:
+    def is_active(self, user: User) -> bool:
         return user.is_active
 
-    def is_superuser(self, user: UsersTable) -> bool:
+    def is_superuser(self, user: User) -> bool:
         return user.is_superuser
 
 
-user_crud = CRUDUser(UsersTable)
+user_crud = CRUDUser(User)

@@ -13,22 +13,19 @@
 
 """Module that implements process related API endpoints."""
 
-from fastapi.param_functions import Depends
 from fastapi.routing import APIRouter
 
 from server.api.api_v1.endpoints import (health, login, maps, product_types,
                                          products, settings, users)
 
-from fastapi import Depends, FastAPI
-
 from server.db import database
-from server.schemas.user import UserInDB
+from server.schemas.user import UserDB
 from server.api.api_v1.endpoints.users import current_active_user, fastapi_users, jwt_authentication
 
 # Todo: add security depends here or in endpoints
 
 api_router = APIRouter()
-api_router.include_router(login.router, tags=["login"])
+# api_router.include_router(login.router, tags=["login"])
 
 api_router.include_router(maps.router, prefix="/maps", tags=["maps"])
 api_router.include_router(products.router, prefix="/products", tags=["products"])
@@ -40,7 +37,7 @@ api_router.include_router(
 api_router.include_router(settings.router, prefix="/settings", tags=["system"])
 api_router.include_router(health.router, prefix="/health", tags=["system"])
 
-api_router.include_router(users.router, prefix="/users", tags=["users"])
+# api_router.include_router(users.router, prefix="/users", tags=["users"])
 
 api_router.include_router(
     fastapi_users.get_auth_router(jwt_authentication), prefix="/auth/jwt", tags=["auth"]

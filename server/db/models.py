@@ -20,16 +20,16 @@ import pytz
 import sqlalchemy
 import structlog
 from sqlalchemy import (Boolean, Column, ForeignKey, Integer, String, Text,
-                        TypeDecorator, text)
+                        TypeDecorator, text, DateTime)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.engine import Dialect
 from sqlalchemy.exc import DontWrapMixin
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import UUIDType
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
+from sqlalchemy.sql.functions import func
 
 from server.db.database import BaseModel
-from server.schemas.user import UserInDB
 from server.utils.date_utils import nowtz
 
 logger = structlog.get_logger(__name__)
@@ -92,25 +92,16 @@ class RolesTable(BaseModel):
     )
 
 
-class UsersTable(BaseModel, SQLAlchemyBaseUserTable):
+class User(BaseModel, SQLAlchemyBaseUserTable):
     __tablename__ = "users"
 
-    id = Column(UUIDType, server_default=text("uuid_generate_v4()"), primary_key=True)
-    username = Column(String(32), nullable=False, unique=True)
-    email = Column(String(255), unique=True, index=True, nullable=False)
-    hashed_password = Column(String(255), nullable=False)
-    is_active = Column(Boolean, nullable=False, default=True)
-    is_superuser = Column(Boolean, nullable=False, default=False)
-    created_at = Column(
-        UtcTimestamp, nullable=False, server_default=text("current_timestamp()")
+    created = Column(DateTime(timezone=True), server_default=func.now())
+    updated = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
-    updated_at = Column(
-        UtcTimestamp,
-        server_default=text("current_timestamp()"),
-        onupdate=nowtz,
-        nullable=False,
-    )
-    roles = relationship("RolesTable", secondary="roles_users", lazy="joined")
+
+    def __repr__(self):
+        return f"User(id={self.id!r}, name={self.email!r})"
 
 
 class ProductsTable(BaseModel):
