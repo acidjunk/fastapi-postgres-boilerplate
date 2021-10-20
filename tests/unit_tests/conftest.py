@@ -210,7 +210,7 @@ def user_admin():
         email="admin@admin",
         hashed_password=get_password_hash("admin"),
         is_superuser=True,
-        is_active=True
+        is_active=True,
     )
     db.session.add(user)
     db.session.commit()
@@ -224,7 +224,7 @@ def user_non_admin():
         email="user@user",
         hashed_password=get_password_hash("user"),
         is_superuser=False,
-        is_active=True
+        is_active=True,
     )
     db.session.add(user)
     db.session.commit()
