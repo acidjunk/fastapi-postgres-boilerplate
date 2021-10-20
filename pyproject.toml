@@ -1,7 +1,7 @@
 [tool.isort]
 profile="black"
 line_length = 120
-skip = ["src", "venv"]
+skip = ["src", "venv", ".aws-sam"]
 
 [tool.black]
 line-length = 120
@@ -15,6 +15,7 @@ exclude = '''
     | \.mypy_cache
     | \.tox
     | \.venv
+    | \.aws-sam
     | venv
     | src
   )/
