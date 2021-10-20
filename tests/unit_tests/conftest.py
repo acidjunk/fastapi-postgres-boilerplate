@@ -22,8 +22,10 @@ from server.api.api_v1.api import api_router
 from server.api.error_handling import ProblemDetailException
 from server.db import ProductsTable, db
 from server.db.database import ENGINE_ARGUMENTS, SESSION_ARGUMENTS, BaseModel, DBSessionMiddleware, SearchQuery
+from server.db.models import UsersTable
 from server.exception_handlers.generic_exception_handlers import form_error_handler, problem_detail_handler
 from server.forms import FormException
+from server.security import get_password_hash
 from server.settings import app_settings
 from server.types import UUIDstr
 from server.utils.date_utils import nowtz
@@ -199,3 +201,31 @@ def product_2():
     db.session.add(product)
     db.session.commit()
     return str(product.id)
+
+
+@pytest.fixture()
+def user_admin():
+    user = UsersTable(
+        username="Admin",
+        email="admin@admin",
+        hashed_password=get_password_hash("admin"),
+        is_superuser=True,
+        is_active=True
+    )
+    db.session.add(user)
+    db.session.commit()
+    return str(user.id)
+
+
+@pytest.fixture()
+def user_non_admin():
+    user = UsersTable(
+        username="User",
+        email="user@user",
+        hashed_password=get_password_hash("user"),
+        is_superuser=False,
+        is_active=True
+    )
+    db.session.add(user)
+    db.session.commit()
+    return str(user.id)
