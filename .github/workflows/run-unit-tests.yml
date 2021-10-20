@@ -7,8 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ 3.8 ]
-    container: python:3.8.3-slim
+        python-version: [ 3.9 ]
+    container: python:3.9-slim
     services:
       postgres:
         image: postgres:12.7-alpine
