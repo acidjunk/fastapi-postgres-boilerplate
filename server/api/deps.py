@@ -42,6 +42,7 @@ def get_current_user(token: str = Depends(reusable_oauth)) -> UsersTable:
             detail="Could not validate credentials",
         )
     user = user_crud.get(id=user_id)
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

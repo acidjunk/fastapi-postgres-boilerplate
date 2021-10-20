@@ -1,7 +1,6 @@
 import structlog
 
 from server.crud import user_crud
-from server.db import db
 from server.schemas import UserCreate
 from server.settings import app_settings
 
