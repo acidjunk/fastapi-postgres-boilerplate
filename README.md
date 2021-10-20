@@ -53,6 +53,16 @@ export TESTING=False
 
 > Note: FastAPI will detect and automatically load an existing `.env` file. 
 
+## Creating an intiial admin user
+
+There is a script in the main folder that creates a initial user with superuser rights:
+
+```bash
+PYTHONPATH=. python server/create_initial_user.py
+```
+
+Note: you can influence the default pass from the settings / env vars.
+
 ## DB Migrations
 
 The database schema is maintained by migrations (see `/migrations` for the
