@@ -43,14 +43,23 @@ class MapCreate(MapBase):
     pass
 
 
+class MapCreateAdmin(MapCreate):
+    created_by: UUID
+
+
 # Properties to receive via API on update
 class MapUpdate(MapBase):
     end_date: Optional[datetime]
 
 
+class MapUpdateAdmin(MapUpdate):
+    created_by: UUID
+
+
 class MapInDBBase(MapBase):
     id: UUID
     created_at: datetime
+    created_by: UUID
 
     class Config:
         orm_mode = True

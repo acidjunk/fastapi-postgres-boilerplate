@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from server.schemas.map import Map, MapCreate, MapUpdate
+from server.schemas.map import Map, MapCreate, MapCreateAdmin, MapUpdate, MapUpdateAdmin
 from server.schemas.msg import Msg
 from server.schemas.product import Product, ProductCreate, ProductUpdate
 from server.schemas.product_type import ProductType, ProductTypeCreate, ProductTypeUpdate
@@ -32,6 +32,8 @@ __all__ = (
     "UserUpdate",
     "Map",
     "MapCreate",
+    "MapCreateAdmin",
     "MapUpdate",
+    "MapUpdateAdmin",
     "Msg",
 )

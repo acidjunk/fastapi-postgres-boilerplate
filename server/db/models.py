@@ -97,7 +97,7 @@ class UsersTable(BaseModel):
         onupdate=nowtz,
         nullable=False,
     )
-
+    maps = relationship("MapsTable", lazy="joined")
     roles = relationship("RolesTable", secondary="roles_users", lazy="joined")
 
 
@@ -133,3 +133,4 @@ class MapsTable(BaseModel):
         onupdate=nowtz,
         nullable=False,
     )
+    created_by = Column(UUIDType, ForeignKey("users.id"), nullable=True)
