@@ -18,17 +18,20 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import JSONResponse
 from starlette.testclient import TestClient
 
+from server import settings
 from server.api.api_v1.api import api_router
 from server.api.error_handling import ProblemDetailException
 from server.db import ProductsTable, db
 from server.db.database import ENGINE_ARGUMENTS, SESSION_ARGUMENTS, BaseModel, DBSessionMiddleware, SearchQuery
-from server.db.models import UsersTable
+from server.db.models import MapsTable, UsersTable
 from server.exception_handlers.generic_exception_handlers import form_error_handler, problem_detail_handler
 from server.forms import FormException
 from server.security import get_password_hash
 from server.settings import app_settings
 from server.types import UUIDstr
 from server.utils.date_utils import nowtz
+
+from .utils.auth import get_superuser_token_headers
 
 logger = structlog.getLogger(__name__)
 
@@ -179,6 +182,11 @@ def test_client(fastapi_app):
     return TestClient(fastapi_app)
 
 
+# @pytest.fixture(scope="session")
+# def superuser_token_headers(test_client) -> Dict[str, str]:
+#     return get_superuser_token_headers(test_client)
+
+
 @pytest.fixture
 def mocked_api():
     with respx.mock(base_url="https://foo.bar") as respx_mock:
@@ -229,3 +237,44 @@ def user_non_admin():
     db.session.add(user)
     db.session.commit()
     return str(user.id)
+
+
+@pytest.fixture()
+def map_1(user_non_admin):
+    map_1 = MapsTable(
+        name="Map1",
+        description="Desc1",
+        size_x=1,
+        size_y=1,
+        status="new",
+        created_by=user_non_admin,
+    )
+    db.session.add(map_1)
+    db.session.commit()
+    return str(map_1.id)
+
+
+@pytest.fixture()
+def superuser_token_headers(test_client, user_admin) -> Dict[str, str]:
+    login_data = {
+        "username": "Admin",
+        "password": "admin",
+    }
+    r = test_client.post("/api/login/access-token", data=login_data)
+    tokens = r.json()
+    a_token = tokens["access_token"]
+    headers = {"Authorization": f"Bearer {a_token}"}
+    return headers
+
+
+@pytest.fixture()
+def user_token_headers(test_client, user_non_admin) -> Dict[str, str]:
+    login_data = {
+        "username": "User",
+        "password": "user",
+    }
+    r = test_client.post("/api/login/access-token", data=login_data)
+    tokens = r.json()
+    a_token = tokens["access_token"]
+    headers = {"Authorization": f"Bearer {a_token}"}
+    return headers

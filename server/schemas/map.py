@@ -44,7 +44,7 @@ class MapCreate(MapBase):
 
 
 class MapCreateAdmin(MapCreate):
-    created_by: UUID
+    created_by: Optional[UUID]
 
 
 # Properties to receive via API on update
@@ -53,13 +53,13 @@ class MapUpdate(MapBase):
 
 
 class MapUpdateAdmin(MapUpdate):
-    created_by: UUID
+    created_by: Optional[UUID]
 
 
 class MapInDBBase(MapBase):
     id: UUID
     created_at: datetime
-    created_by: UUID
+    created_by: Optional[UUID]
 
     class Config:
         orm_mode = True
