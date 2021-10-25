@@ -11,5 +11,4 @@ def test_users_get_multi_admin(test_client, superuser_token_headers):
 
 def test_users_get_multi_non_admin(test_client, user_token_headers):
     response = test_client.get("/api/users", headers=user_token_headers)
-    # Isn't it 403 Unauthorized a better response code here ? Currently 400 Bad Request
-    assert HTTPStatus.BAD_REQUEST == response.status_code
+    assert HTTPStatus.FORBIDDEN == response.status_code

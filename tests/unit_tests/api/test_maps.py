@@ -53,7 +53,7 @@ def test_admin_map_create_with_normal_user(test_client, user_token_headers):
         data=json_dumps(body),
         headers=user_token_headers,
     )
-    assert HTTPStatus.BAD_REQUEST == response.status_code
+    assert HTTPStatus.FORBIDDEN == response.status_code
 
 
 def test_map_update_with_owner(test_client, user_token_headers, map_1):
@@ -128,4 +128,4 @@ def test_admin_map_update_with_not_admin(test_client, user_token_headers, map_1)
         data=json_dumps(body),
         headers=user_token_headers,
     )
-    assert HTTPStatus.BAD_REQUEST == response.status_code
+    assert HTTPStatus.FORBIDDEN == response.status_code

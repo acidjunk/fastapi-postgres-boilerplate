@@ -182,11 +182,6 @@ def test_client(fastapi_app):
     return TestClient(fastapi_app)
 
 
-# @pytest.fixture(scope="session")
-# def superuser_token_headers(test_client) -> Dict[str, str]:
-#     return get_superuser_token_headers(test_client)
-
-
 @pytest.fixture
 def mocked_api():
     with respx.mock(base_url="https://foo.bar") as respx_mock:
