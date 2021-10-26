@@ -107,6 +107,8 @@ class AppSettings(BaseSettings):
 
     FIRST_SUPERUSER = "admin@banaan.org"
     FIRST_SUPERUSER_PASSWORD = "CHANGEME"
+    FIRST_USER = "user@banaan.org"
+    FIRST_USER_PASSWORD = "CHANGEME"
 
     @validator("EMAILS_FROM_NAME")
     def get_project_name(cls, v: Optional[str], values: Dict[str, Any]) -> str:

@@ -18,7 +18,7 @@ router = APIRouter()
 
 
 @router.get("/")
-def read_users(
+def get_multi(
     response: Response,
     common: dict = Depends(common_parameters),
     current_user: UsersTable = Depends(deps.get_current_active_superuser),
@@ -37,7 +37,7 @@ def read_users(
 
 
 @router.post("/", response_model=User)
-def create_user(
+def create(
     *,
     user_in: UserCreate,
     current_user: UsersTable = Depends(deps.get_current_active_superuser),
@@ -82,7 +82,7 @@ def update_user_me(
 
 # @router.get("/me", response_model=UsersTable)
 @router.get("/me", response_model=User)
-def read_user_me(
+def get_user_me(
     current_user: UsersTable = Depends(deps.get_current_active_user),
 ) -> Any:
     """
@@ -119,7 +119,7 @@ def read_user_me(
 
 
 @router.get("/{user_id}", response_model=User)
-def read_user_by_id(
+def get_by_id(
     user_id: int,
     current_user: UsersTable = Depends(deps.get_current_active_user),
 ) -> Any:
@@ -135,7 +135,7 @@ def read_user_by_id(
 
 
 @router.put("/{user_id}", response_model=User)
-def update_user(
+def update(
     *,
     user_id: int,
     user_in: UserUpdate,
