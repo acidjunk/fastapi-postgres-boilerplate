@@ -23,5 +23,5 @@ SQLAlchemy-Searchable~=1.2.0
 structlog~=20.2.0
 typer-cli~=0.0.11
 uvicorn[standard]~=0.13.4
-mangum>=0.11.0
-httpcore==0.13.7
+mangum>=0.12.0
+httpcore==0.13.7  # Pinned as 0.14 has breaking changes
