@@ -1,6 +1,6 @@
 -r base.txt
 gitchangelog~=3.0.4
-pystache~=0.5.4
+pystache~=0.6.0
 recommonmark~=0.7.1
 Sphinx~=3.5.2
 sphinx-autobuild~=2020.9.1
