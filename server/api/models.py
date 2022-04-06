@@ -127,8 +127,11 @@ def parse_date_fields(json_dict: Dict) -> None:
 
 
 def transform_json(json_dict: Dict) -> Dict:
-    def _contains_list(coll: Iterable[Any]) -> bool:
-        return len(list(filter(lambda item: isinstance(item, list), coll))) > 0
+    """Cleanup up non serializable types.
+
+    This function will ensure that stuff like dates and python object will be converted to types that the JSON
+    decoder can handle. It will for now only handle python objects and date times.
+    """
 
     def _do_transform(items: Iterable[Tuple[str, Any]]) -> Dict:
         return dict(map(_parse, items))
@@ -141,8 +144,4 @@ def transform_json(json_dict: Dict) -> Dict:
 
     cleanse_json(json_dict)
     parse_date_fields(json_dict)
-
-    if _contains_list(json_dict.values()):
-        return _do_transform(json_dict.items())
-
     return json_dict

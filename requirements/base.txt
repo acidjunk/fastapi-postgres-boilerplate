@@ -5,7 +5,7 @@ colorama~=0.4.4
 Deprecated~=1.2.12
 emails~=0.6
 email-validator~=1.1.3
-fastapi~=0.63.0
+fastapi>=0.73.0
 fastapi-mail~=0.3.5.0
 gunicorn~=20.0.4
 itsdangerous==1.1.0
@@ -23,4 +23,5 @@ SQLAlchemy-Searchable~=1.2.0
 structlog~=20.2.0
 typer-cli~=0.0.11
 uvicorn[standard]~=0.13.4
-mangum>=0.11.0
+mangum>=0.12.0
+httpcore==0.13.7  # Pinned as 0.14 has breaking changes
