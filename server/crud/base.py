@@ -3,7 +3,7 @@ from typing import Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar, Uni
 
 from fastapi.encoders import jsonable_encoder
 from more_itertools import one
-from sqlalchemy import String, cast, or_
+from sqlalchemy import or_
 from sqlalchemy.inspection import inspect as sa_inspect
 from sqlalchemy.sql import expression
 
@@ -59,13 +59,13 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                 # treat the key as the value
                 if len(value) > 0:
                     if key in sa_inspect(self.model).columns.keys():
-                        conditions.append(cast(self.model.__dict__[key], String).ilike("%" + one(value) + "%"))
+                        conditions.append(self.model.__dict__[key].ilike("%" + one(value) + "%"))
                     else:
                         logger.info(f"Key: not found in database model key={key}, model={self.model}")
                     query = query.filter(or_(*conditions))
                 else:
                     for column in sa_inspect(self.model).columns.keys():
-                        conditions.append(cast(self.model.__dict__[column], String).ilike("%" + key + "%"))
+                        conditions.append(self.model.__dict__[column].ilike("%" + key + "%"))
                     query = query.filter(or_(*conditions))
 
         if sort_parameters and len(sort_parameters):
